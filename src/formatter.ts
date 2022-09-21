@@ -1,3 +1,4 @@
+import stylelint from 'stylelint';
 import {
   applyTodoChanges,
   buildTodoDatum,
@@ -5,27 +6,28 @@ import {
   generateTodoBatches,
   getSeverity,
   getTodoConfig,
-  Severity,
+  Severity as SeverityIntegers,
   TodoConfig,
   TodoData,
   todoStorageFileExists,
-  Range,
   validateConfig,
   WriteTodoOptions,
   writeTodos,
 } from '@lint-todo/utils';
+import { Severity, TodoFormatterOptions, TodoWarning, LintResultWithTodo } from './types';
 import { relative, join } from 'path';
+import { getBaseDir } from './get-base-dir';
 import hasFlag from 'has-flag';
 import ci from 'ci-info';
-import { printResults } from './print-results';
-import { getBaseDir } from './get-base-dir';
 
-import type { ESLint, Linter } from 'eslint';
-import type { TodoFormatterOptions } from './types';
+const SEVERITY_INT_MAP = {
+  [-1]: Severity.TODO,
+  [0]: Severity.OFF,
+  [1]: Severity.WARNING,
+  [2]: Severity.ERROR
+};
 
-const LINES_PATTERN = /(.*?(?:\r\n?|\n|$))/gm;
-
-export async function formatter(results: ESLint.LintResult[]): Promise<string> {
+export async function formatter(results: LintResultWithTodo[], returnValue: stylelint.LinterResult): Promise<string> {
   const baseDir = getBaseDir();
   const todoConfigResult = validateConfig(baseDir);
 
@@ -42,7 +44,7 @@ export async function formatter(results: ESLint.LintResult[]): Promise<string> {
   const todoInfo = {
     added: 0,
     removed: 0,
-    todoConfig: getTodoConfig(process.cwd(), 'eslint') ?? {},
+    todoConfig: getTodoConfig(process.cwd(), 'stylelint') ?? {},
   };
 
   const formatTodoAs = process.env.FORMAT_TODO_AS;
@@ -68,35 +70,36 @@ export async function formatter(results: ESLint.LintResult[]): Promise<string> {
       todoInfo.todoConfig
     );
 
-    const optionsForFile: WriteTodoOptions = {
-      engine: 'eslint',
-      shouldRemove: (todoDatum: TodoData) => todoDatum.engine === 'eslint',
-      todoConfig: todoInfo.todoConfig,
-      filePath: relative(baseDir, fileResults.filePath),
-    };
+      const optionsForFile: WriteTodoOptions = {
+        engine: 'stylelint',
+        shouldRemove: (todoDatum: TodoData) => todoDatum.engine === 'stylelint',
+        todoConfig: todoInfo.todoConfig,
+        filePath: relative(baseDir, fileResults.source ?? ''),
+      };
 
-    if (updateTodo) {
-      const { addedCount, removedCount } = writeTodos(
-        baseDir,
-        maybeTodos,
-        optionsForFile
-      );
+      if (updateTodo) {
+        const { addedCount, removedCount } = writeTodos(
+          baseDir,
+          maybeTodos,
+          optionsForFile
+        );
 
-      todoInfo.added += addedCount;
-      todoInfo.removed += removedCount;
-    }
+        todoInfo.added += addedCount;
+        todoInfo.removed += removedCount;
+      }
 
-    processResults(results, maybeTodos, {
-      formatTodoAs,
-      updateTodo,
-      includeTodo,
-      shouldCleanTodos,
-      todoInfo,
-      writeTodoOptions: optionsForFile,
-    });
+      processResults(results, maybeTodos, {
+        formatTodoAs,
+        updateTodo,
+        includeTodo,
+        shouldCleanTodos,
+        todoInfo,
+        writeTodoOptions: optionsForFile,
+      });
   }
 
-  return await printResults(results, {
+  // TODO Implement printResults to match string formatter for stylelint
+  return await printResults(results, returnValue, {
     formatTodoAs,
     updateTodo,
     includeTodo,
@@ -106,7 +109,7 @@ export async function formatter(results: ESLint.LintResult[]): Promise<string> {
 }
 
 function processResults(
-  results: ESLint.LintResult[],
+  results: LintResultWithTodo[],
   maybeTodos: Set<TodoData>,
   options: TodoFormatterOptions
 ) {
@@ -138,14 +141,15 @@ function processResults(
  *
  * @param results ESLint results array
  */
-export function updateResults(
-  results: ESLint.LintResult[],
+ export function updateResults(
+  results: LintResultWithTodo[],
   existingTodos: Set<TodoData>
 ): void {
   for (const todo of existingTodos) {
-    const severity: Severity = getSeverity(todo);
+    const SeverityInteger: SeverityIntegers = getSeverity(todo);
+    const severity: Severity = SEVERITY_INT_MAP[SeverityInteger];
 
-    if (severity === Severity.error) {
+    if (severity === Severity.ERROR) {
       continue;
     }
 
@@ -155,78 +159,52 @@ export function updateResults(
       continue;
     }
 
-    const message = result.messages.find(
-      (message) => message === todo.originalLintResult
+    const warning = result.warnings.find(
+      (warning) => warning === todo.originalLintResult
     );
 
-    if (!message) {
+    if (!warning) {
       continue;
     }
 
-    if (severity === Severity.warn) {
-      result.warningCount = result.warningCount + 1;
-
-      if (message.fix) {
-        result.fixableWarningCount = result.fixableWarningCount + 1;
-        result.fixableErrorCount -= 1;
-      }
-    } else {
-      result.todoCount = Number.isInteger(result.todoCount)
-        ? result.todoCount + 1
-        : 1;
-
-      if (message.fix) {
-        result.fixableTodoCount = Number.isInteger(result.fixableTodoCount)
-          ? result.fixableTodoCount + 1
-          : 1;
-        result.fixableErrorCount -= 1;
-      }
-    }
-
-    message.severity = <Linter.Severity>severity;
-
-    result.errorCount -= 1;
+    warning.severity = <Severity>severity;
   }
 }
 
-export function buildMaybeTodos(
+function buildMaybeTodos(
   baseDir: string,
-  lintResults: ESLint.LintResult[],
+  lintResults: LintResultWithTodo[],
   todoConfig?: TodoConfig,
   engine?: string
 ): Set<TodoData> {
-  const results = lintResults.filter((result) => result.messages.length > 0);
+  const results = lintResults.filter((result) => result.warnings.length > 0);
 
   const todoData = results.reduce((converted, lintResult) => {
-    lintResult.messages.forEach((message: Linter.LintMessage) => {
-      if (message.severity !== Severity.error) {
+    lintResult.warnings.forEach((warning) => {
+      if (warning.severity !== Severity.ERROR) {
         return;
       }
 
       const range = {
         start: {
-          line: message.line,
-          column: message.column,
+          line: warning.line,
+          column: warning.column,
         },
         end: {
-          line: message.endLine ?? message.line,
-          column: message.endColumn ?? message.column,
+          line: warning.endLine ?? warning.line,
+          column: warning.endColumn ?? warning.column,
         },
       };
       const todoDatum = buildTodoDatum(
         baseDir,
         {
-          engine: engine ?? 'eslint',
-          filePath: lintResult.filePath,
-          ruleId: message.ruleId || '',
+          engine: engine ?? 'stylelint',
+          filePath: lintResult.source ?? '',
+          ruleId: warning.rule ?? '',
           range,
-          source: lintResult.source
-            ? getSourceForRange(
-                lintResult.source.match(LINES_PATTERN) || [],
-                range
-              )
-            : '',
-          originalLintResult: message,
+					// Stylelint does not have source as a part of its warning
+          source: '',
+          originalLintResult: warning,
         },
         todoConfig
       );
@@ -240,67 +218,32 @@ export function buildMaybeTodos(
   return todoData;
 }
 
-function getSourceForRange(source: string[], range: Range) {
-  const firstLine = range.start.line - 1;
-  const lastLine = range.end.line - 1;
-  let currentLine = firstLine - 1;
-  const firstColumn = range.start.column - 1;
-  const lastColumn = range.end.column - 1;
-  const src = [];
-  let line;
-
-  while (currentLine < lastLine) {
-    currentLine++;
-    line = source[currentLine];
-
-    if (currentLine === firstLine) {
-      if (firstLine === lastLine) {
-        src.push(line.slice(firstColumn, lastColumn));
-      } else {
-        src.push(line.slice(firstColumn));
-      }
-    } else if (currentLine === lastLine) {
-      src.push(line.slice(0, lastColumn));
-    } else {
-      src.push(line);
-    }
-  }
-
-  return src.join('');
-}
-
-function pushResult(results: ESLint.LintResult[], todo: TodoData) {
+function pushResult(results: LintResultWithTodo[], todo: TodoData) {
   const resultForFile = findResult(results, todo);
 
-  const result: Linter.LintMessage = {
-    ruleId: 'invalid-todo-violation-rule',
-    message: `Todo violation passes \`${todo.ruleId}\` rule. Please run with \`CLEAN_TODO=1\` env var to remove this todo from the todo list.`,
-    severity: 2,
+  const todoWarning: TodoWarning = {
+    rule: 'invalid-todo-violation-rule',
+    text: `Todo violation passes \`${todo.ruleId}\` rule. Please run with \`CLEAN_TODO=1\` env var to remove this todo from the todo list.`,
+    severity: 'todo',
     column: 0,
     line: 0,
   };
 
   if (resultForFile) {
-    resultForFile.messages.push(result);
-    resultForFile.errorCount += 1;
+    resultForFile.warnings.push(todoWarning);
   } else {
     results.push({
-      filePath: join(getBaseDir(), todo.filePath),
-      messages: [result],
-      errorCount: 1,
-      warningCount: 0,
-      todoCount: 0,
-      fatalErrorCount: 0,
-      fixableErrorCount: 0,
-      fixableWarningCount: 0,
-      fixableTodoCount: 0,
-      usedDeprecatedRules: [],
+      source: join(getBaseDir(), todo.filePath),
+      warnings: [todoWarning],
+      deprecations: [],
+      invalidOptionWarnings: [],
+      parseErrors: []
     });
   }
 }
 
-function findResult(results: ESLint.LintResult[], todo: TodoData) {
+function findResult(results: LintResultWithTodo[], todo: TodoData) {
   return results.find(
-    (result) => relative(getBaseDir(), result.filePath) === todo.filePath
+    (result) => relative(getBaseDir(), result.source ?? '') === todo.filePath
   );
 }
