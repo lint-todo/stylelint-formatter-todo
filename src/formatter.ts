@@ -70,32 +70,32 @@ export async function formatter(results: LintResultWithTodo[], returnValue: styl
       todoInfo.todoConfig
     );
 
-      const optionsForFile: WriteTodoOptions = {
-        engine: 'stylelint',
-        shouldRemove: (todoDatum: TodoData) => todoDatum.engine === 'stylelint',
-        todoConfig: todoInfo.todoConfig,
-        filePath: relative(baseDir, fileResults.source ?? ''),
-      };
+    const optionsForFile: WriteTodoOptions = {
+      engine: 'stylelint',
+      shouldRemove: (todoDatum: TodoData) => todoDatum.engine === 'stylelint',
+      todoConfig: todoInfo.todoConfig,
+      filePath: relative(baseDir, fileResults.source ?? ''),
+    };
 
-      if (updateTodo) {
-        const { addedCount, removedCount } = writeTodos(
-          baseDir,
-          maybeTodos,
-          optionsForFile
-        );
+    if (updateTodo) {
+      const { addedCount, removedCount } = writeTodos(
+        baseDir,
+        maybeTodos,
+        optionsForFile
+      );
 
-        todoInfo.added += addedCount;
-        todoInfo.removed += removedCount;
-      }
+      todoInfo.added += addedCount;
+      todoInfo.removed += removedCount;
+    }
 
-      processResults(results, maybeTodos, {
-        formatTodoAs,
-        updateTodo,
-        includeTodo,
-        shouldCleanTodos,
-        todoInfo,
-        writeTodoOptions: optionsForFile,
-      });
+    processResults(results, maybeTodos, {
+      formatTodoAs,
+      updateTodo,
+      includeTodo,
+      shouldCleanTodos,
+      todoInfo,
+      writeTodoOptions: optionsForFile,
+    });
   }
 
   // TODO Implement printResults to match string formatter for stylelint
@@ -195,6 +195,7 @@ function buildMaybeTodos(
           column: warning.endColumn ?? warning.column,
         },
       };
+      
       const todoDatum = buildTodoDatum(
         baseDir,
         {
