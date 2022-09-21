@@ -1,4 +1,3 @@
-import stylelint from 'stylelint';
 import {
   applyTodoChanges,
   buildTodoDatum,
@@ -12,13 +11,13 @@ import {
   todoStorageFileExists,
   validateConfig,
   WriteTodoOptions,
-  writeTodos,
+  writeTodos
 } from '@lint-todo/utils';
-import { Severity, TodoFormatterOptions, TodoWarning, LintResultWithTodo } from './types';
-import { relative, join } from 'path';
-import { getBaseDir } from './get-base-dir';
-import hasFlag from 'has-flag';
 import ci from 'ci-info';
+import hasFlag from 'has-flag';
+import { join, relative } from 'path';
+import { getBaseDir } from './get-base-dir';
+import { LintResultWithTodo, Severity, TodoFormatterOptions, TodoWarning } from './types';
 
 const SEVERITY_INT_MAP = {
   [-1]: Severity.TODO,
@@ -27,7 +26,7 @@ const SEVERITY_INT_MAP = {
   [2]: Severity.ERROR
 };
 
-export async function formatter(results: LintResultWithTodo[], returnValue: stylelint.LinterResult): Promise<string> {
+export async function formatter(results: LintResultWithTodo[]): Promise<string> {
   const baseDir = getBaseDir();
   const todoConfigResult = validateConfig(baseDir);
 
@@ -99,13 +98,14 @@ export async function formatter(results: LintResultWithTodo[], returnValue: styl
   }
 
   // TODO Implement printResults to match string formatter for stylelint
-  return await printResults(results, returnValue, {
-    formatTodoAs,
-    updateTodo,
-    includeTodo,
-    shouldCleanTodos,
-    todoInfo,
-  });
+  // return await printResults(results, returnValue, {
+  //   formatTodoAs,
+  //   updateTodo,
+  //   includeTodo,
+  //   shouldCleanTodos,
+  //   todoInfo,
+  // });
+  return '';
 }
 
 function processResults(
