@@ -1,18 +1,20 @@
 import type { TodoConfig, WriteTodoOptions } from '@lint-todo/utils';
-import type { Linter } from 'eslint';
+import stylelint from 'stylelint';
 
-declare module 'eslint' {
-  export namespace ESLint {
-    interface LintResult {
-      todoCount: number;
-      fixableTodoCount: number;
-    }
-  }
+export declare enum Severity {
+  TODO = 'todo',
+  OFF = 'off',
+  WARNING = 'warning',
+  ERROR = 'error'
 }
 
-export type TodoResultMessage = Omit<Linter.LintMessage, 'severity'> & {
-  severity: Linter.Severity | -1;
-};
+export type LintResultWithTodo = Omit<stylelint.LintResult, 'warnings'> & {
+  warnings: TodoWarning[]
+}
+
+export type TodoWarning = Omit<stylelint.Warning, 'severity'> & {
+  severity:  'todo'| 'off' | 'warning' | 'error';
+}
 
 export type TodoInfo =
   | {
