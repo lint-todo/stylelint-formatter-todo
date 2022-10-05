@@ -1,18 +1,20 @@
 import type { TodoConfig, WriteTodoOptions } from '@lint-todo/utils';
-import type { Linter } from 'eslint';
+import stylelint from 'stylelint';
 
-declare module 'eslint' {
-  export namespace ESLint {
-    interface LintResult {
-      todoCount: number;
-      fixableTodoCount: number;
-    }
-  }
+export declare enum Severity {
+  TODO = 'todo',
+  OFF = 'off',
+  WARNING = 'warning',
+  ERROR = 'error'
 }
 
-export type TodoResultMessage = Omit<Linter.LintMessage, 'severity'> & {
-  severity: Linter.Severity | -1;
-};
+export type LintResultWithTodo = Omit<stylelint.LintResult, 'warnings'> & {
+  warnings: TodoWarning[]
+}
+
+export type TodoWarning = Omit<stylelint.Warning, 'severity'> & {
+  severity:  'todo'| 'off' | 'warning' | 'error';
+}
 
 export type TodoInfo =
   | {
@@ -31,6 +33,14 @@ export interface TodoFormatterOptions {
   writeTodoOptions: WriteTodoOptions;
 }
 
+export interface TodoPrintOptions {
+  formatTodoAs?: string;
+  updateTodo?: boolean;
+  includeTodo?: boolean;
+  shouldCleanTodos?: boolean;
+  todoInfo?: TodoInfo;
+}
+
 export interface TodoFormatterCounts {
   readonly total: number;
   readonly errorCount: number;
@@ -40,3 +50,7 @@ export interface TodoFormatterCounts {
   readonly fixableWarningCount: number;
   readonly fixableTodoCount: number;
 }
+
+export type ColumnWidths = {[k: number]: number}
+
+export type Formatter = (results:LintResultWithTodo[], options?: TodoPrintOptions, returnValue?:stylelint.LinterResult) => string;
