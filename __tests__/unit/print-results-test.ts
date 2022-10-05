@@ -1,5 +1,5 @@
 import { stripIndent } from 'common-tags';
-// import prepareFormatterOutput from '../__utils__/prepare-formatter-output';
+import prepareFormatterOutput from '../__utils__/prepare-formatter-output';
 import printResults from '../../src/print-results';
 import {
 	LintResultWithTodo,
@@ -71,193 +71,198 @@ describe('printResults', () => {
 			},
 		];
 
-    const output = printResults(results, getOptions());
-		// const output = prepareFormatterOutput(results, printResults);
+		const output = prepareFormatterOutput(results, printResults);
+		expect(output).toBe(stripIndent(`
+path/to/file.css
+ 1:1  ×  Unexpected foo  bar
+
+1 problem (1 error, 0 warnings)`));
+	});
+
+	it('removes rule name from warning text', () => {
+		const results: LintResultWithTodo[] = [
+			{
+				source: 'path/to/file.css',
+				errored: true,
+				warnings: [
+					{
+						line: 1,
+						column: 1,
+						rule: 'rule-name',
+						severity: 'warning',
+						text: 'Unexpected foo (rule-name)',
+					},
+				],
+				deprecations: [],
+				invalidOptionWarnings: [],
+        parseErrors: [],
+			},
+		];
+
+		const output = prepareFormatterOutput(results, printResults);
 
 		expect(output).toBe(stripIndent`
-      path/to/file.css
-      1:1  ×  Unexpected foo  bar
-      1 problem (1 error, 0 warnings)`);
-  });
+path/to/file.css
+ 1:1  ‼  Unexpected foo  rule-name
 
-	// it('removes rule name from warning text', () => {
-	// 	const results: LintResultWithTodo[] = [
-	// 		{
-	// 			source: 'path/to/file.css',
-	// 			errored: true,
-	// 			warnings: [
-	// 				{
-	// 					line: 1,
-	// 					column: 1,
-	// 					rule: 'rule-name',
-	// 					severity: 'warning',
-	// 					text: 'Unexpected foo (rule-name)',
-	// 				},
-	// 			],
-	// 			deprecations: [],
-	// 			invalidOptionWarnings: [],
-  //       parseErrors: [],
-	// 		},
-	// 	];
+1 problem (0 errors, 1 warning)`);
+	});
 
-	// 	const output = prepareFormatterOutput(results, printResults);
+	it('outputs warnings without stdout `TTY`', () => {
+		process.stdout.isTTY = false;
 
-	// 	expect(output).toBe(stripIndent`
-  //     path/to/file.css
-  //     1:1  ‼  Unexpected foo  rule-name
-  //     1 problem (0 errors, 1 warning)`);
-	// });
+		const results: LintResultWithTodo[] = [
+			{
+				source: 'path/to/file.css',
+				errored: true,
+				warnings: [
+					{
+						line: 1,
+						column: 1,
+						rule: 'bar',
+						severity: 'error',
+						text: 'Unexpected foo',
+					},
+				],
+				deprecations: [],
+				invalidOptionWarnings: [],
+        parseErrors: [],
+			},
+		];
 
-	// it('outputs warnings without stdout `TTY`', () => {
-	// 	process.stdout.isTTY = false;
+		const output = prepareFormatterOutput(results, printResults);
 
-	// 	const results: LintResultWithTodo[] = [
-	// 		{
-	// 			source: 'path/to/file.css',
-	// 			errored: true,
-	// 			warnings: [
-	// 				{
-	// 					line: 1,
-	// 					column: 1,
-	// 					rule: 'bar',
-	// 					severity: 'error',
-	// 					text: 'Unexpected foo',
-	// 				},
-	// 			],
-	// 			deprecations: [],
-	// 			invalidOptionWarnings: [],
-  //       parseErrors: [],
-	// 		},
-	// 	];
+		expect(output).toBe(stripIndent`
+path/to/file.css
+ 1:1  ×  Unexpected foo  bar
 
-	// 	const output = prepareFormatterOutput(results, printResults);
+1 problem (1 error, 0 warnings)`);
+	});
 
-	// 	expect(output).toBe(stripIndent`
-  //     path/to/file.css
-  //     1:1  ×  Unexpected foo  bar
-  //     1 problem (1 error, 0 warnings)`);
-  // });
+	it('output warnings with more than 80 characters and `process.stdout.columns` equal 90 characters', () => {
+		// For Windows tests
+		process.stdout.isTTY = true;
+		process.stdout.columns = 90;
 
-	// it('output warnings with more than 80 characters and `process.stdout.columns` equal 90 characters', () => {
-	// 	// For Windows tests
-	// 	process.stdout.isTTY = true;
-	// 	process.stdout.columns = 90;
+		const results: LintResultWithTodo[] = [
+			{
+				source: 'path/to/file.css',
+				errored: true,
+				warnings: [
+					{
+						line: 1,
+						column: 1,
+						rule: 'bar-very-very-very-very-very-long',
+						severity: 'error',
+						text: 'Unexpected very very very very very very very very very very very very very long foo',
+					},
+				],
+				deprecations: [],
+				invalidOptionWarnings: [],
+        parseErrors: [],
+			},
+		];
 
-	// 	const results: LintResultWithTodo[] = [
-	// 		{
-	// 			source: 'path/to/file.css',
-	// 			errored: true,
-	// 			warnings: [
-	// 				{
-	// 					line: 1,
-	// 					column: 1,
-	// 					rule: 'bar-very-very-very-very-very-long',
-	// 					severity: 'error',
-	// 					text: 'Unexpected very very very very very very very very very very very very very long foo',
-	// 				},
-	// 			],
-	// 			deprecations: [],
-	// 			invalidOptionWarnings: [],
-  //       parseErrors: [],
-	// 		},
-	// 	];
+		const output = prepareFormatterOutput(results, printResults);
 
-	// 	const output = prepareFormatterOutput(results, printResults);
+		expect(output).toBe(stripIndent`
+path/to/file.css
+ 1:1  ×  Unexpected very very very very very very very  bar-very-very-very-very-very-long
+         very very very very very very long foo
 
-	// 	expect(output).toBe(stripIndent`
-  //     path/to/file.css
-  //     1:1  ×  Unexpected very very very very very very very  bar-very-very-very-very-very-long
-  //             very very very very very very long foo
-  //     1 problem (1 error, 0 warnings)`);
-	// });
+1 problem (1 error, 0 warnings)`);
+	});
 
-	// it('condenses deprecations and invalid option warnings', () => {
-	// 	const results: LintResultWithTodo[] = [
-	// 		{
-	// 			source: 'file.css',
-	// 			deprecations: [
-	// 				{
-	// 					text: 'Deprecated foo',
-	// 					reference: 'bar',
-	// 				},
-	// 			],
-	// 			invalidOptionWarnings: [
-	// 				{
-	// 					text: 'Unexpected option for baz',
-	// 				},
-	// 			],
-	// 			errored: true,
-	// 			warnings: [],
-  //       parseErrors: [],
-	// 		},
-	// 		{
-	// 			source: 'file2.css',
-	// 			deprecations: [
-	// 				{
-	// 					text: 'Deprecated foo',
-	// 					reference: 'bar',
-	// 				},
-	// 			],
-	// 			invalidOptionWarnings: [
-	// 				{
-	// 					text: 'Unexpected option for baz',
-	// 				},
-	// 			],
-	// 			errored: true,
-	// 			warnings: [],
-  //       parseErrors: [],
-	// 		},
-	// 	];
 
-	// 	const output = prepareFormatterOutput(results, printResults);
+	it('condenses deprecations and invalid option warnings', () => {
+		const results: LintResultWithTodo[] = [
+			{
+				source: 'file.css',
+				deprecations: [
+					{
+						text: 'Deprecated foo',
+						reference: 'bar',
+					},
+				],
+				invalidOptionWarnings: [
+					{
+						text: 'Unexpected option for baz',
+					},
+				],
+				errored: true,
+				warnings: [],
+        parseErrors: [],
+			},
+			{
+				source: 'file2.css',
+				deprecations: [
+					{
+						text: 'Deprecated foo',
+						reference: 'bar',
+					},
+				],
+				invalidOptionWarnings: [
+					{
+						text: 'Unexpected option for baz',
+					},
+				],
+				errored: true,
+				warnings: [],
+        parseErrors: [],
+			},
+		];
 
-	// 	expect(output).toBe(stripIndent`
-  //     Invalid Option: Unexpected option for baz
-  //     Deprecation Warning: Deprecated foo See: bar`);
-	// });
+		const output = prepareFormatterOutput(results, printResults);
 
-	// it('handles ignored file', () => {
-	// 	const results = [
-	// 		{
-	// 			source: 'file.css',
-	// 			warnings: [],
-	// 			deprecations: [],
-	// 			invalidOptionWarnings: [],
-	// 			ignored: true,
-  //       parseErrors: [],
-	// 		},
-	// 	];
+		expect(output).toBe(stripIndent`
+Invalid Option: Unexpected option for baz
 
-	// 	const output = prepareFormatterOutput(results, printResults);
+Deprecation Warning: Deprecated foo See: bar`);
+	});
 
-	// 	expect(output).toBe('');
-	// });
+	it('handles ignored file', () => {
+		const results = [
+			{
+				source: 'file.css',
+				warnings: [],
+				deprecations: [],
+				invalidOptionWarnings: [],
+				ignored: true,
+        parseErrors: [],
+			},
+		];
 
-	// it('handles empty messages', () => {
-	// 	const results: LintResultWithTodo[] = [
-	// 		{
-	// 			source: 'path/to/file.css',
-	// 			errored: true,
-	// 			warnings: [
-	// 				{
-	// 					line: 1,
-	// 					column: 1,
-	// 					rule: 'bar',
-	// 					severity: 'error',
-	// 					text: '',
-	// 				},
-	// 			],
-	// 			deprecations: [],
-	// 			invalidOptionWarnings: [],
-  //       parseErrors: [],
-	// 		},
-	// 	];
+		const output = prepareFormatterOutput(results, printResults);
 
-	// 	const output = prepareFormatterOutput(results, printResults);
+		expect(output).toBe('');
+	});
 
-	// 	expect(output).toBe(stripIndent`
-  //     path/to/file.css
-  //     1:1  ×     bar
-  //     1 problem (1 error, 0 warnings)`);
-	// });
+	it('handles empty messages', () => {
+		const results: LintResultWithTodo[] = [
+			{
+				source: 'path/to/file.css',
+				errored: true,
+				warnings: [
+					{
+						line: 1,
+						column: 1,
+						rule: 'bar',
+						severity: 'error',
+						text: '',
+					},
+				],
+				deprecations: [],
+				invalidOptionWarnings: [],
+        parseErrors: [],
+			},
+		];
+
+		const output = prepareFormatterOutput(results, printResults);
+
+		expect(output).toBe(stripIndent`
+path/to/file.css
+ 1:1  ×     bar
+
+1 problem (1 error, 0 warnings)`);
+	});
 });
