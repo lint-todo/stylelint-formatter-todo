@@ -1,0 +1,85 @@
+{
+  "cwd": "",
+  "results": [
+    {
+      "source": "{{path}}/app/styles/_file-two.scss", 
+      "errored": true, 
+      "warnings": [
+        {
+          "line": 3,
+          "column": 12,
+          "endLine": 4,
+          "endColumn": 15,
+          "rule": "unit-no-unknown",
+          "severity": "error",
+          "text": "Unexpected unknown unit \"x\" (unit-no-unknown)"
+        },
+        {
+          "line": 6,
+          "column": 12,
+          "endLine": 7,
+          "endColumn": 15,
+          "rule": "unit-no-unknown",
+          "severity": "warning",
+          "text": "Unexpected unknown unit \"x\" (unit-no-unknown)"
+        },
+        {
+          "line": 9,
+          "column": 12,
+          "endLine": 10,
+          "endColumn": 15,
+          "rule": "unit-no-unknown",
+          "severity": "todo",
+          "text": "Unexpected unknown unit \"x\" (unit-no-unknown)"
+        }
+      ],
+      "deprecations": [],
+      "invalidOptionWarnings": [],
+      "ignored": false
+    },
+    {
+      "source": "{{path}}/app/styles/_file-two.scss", 
+      "errored": true, 
+      "warnings": [
+        {
+          "line": 3,
+          "column": 12,
+          "endLine": 4,
+          "endColumn": 15,
+          "rule": "block-no-empty",
+          "severity": "error",
+          "text": "Unexpected unknown unit \"x\" (unit-no-unknown)"
+        },
+        {
+          "line": 6,
+          "column": 12,
+          "endLine": 7,
+          "endColumn": 15,
+          "rule": "block-no-empty",
+          "severity": "warning",
+          "text": "Unexpected unknown unit \"x\" (unit-no-unknown)"
+        },
+        {
+          "line": 9,
+          "column": 12,
+          "endLine": 10,
+          "endColumn": 15,
+          "rule": "block-no-empty",
+          "severity": "todo",
+          "text": "You should not have an empty block (block-no-empty)"
+        }
+      ],
+      "deprecations": [],
+      "invalidOptionWarnings": [],
+      "ignored": false
+    }
+  ],
+  "errored": true,
+  "output": null,
+  "maxWarningsExceeded": null,
+  "reportedDisables": null,
+  "descriptionlessDisables": null,
+  "needlessDisables": null,
+  "invalidScopeDisables": null,
+  "ruleMetadata": {}
+}

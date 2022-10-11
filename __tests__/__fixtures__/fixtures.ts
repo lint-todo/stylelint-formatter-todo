@@ -1,30 +1,33 @@
-import type { CLIEngine, ESLint } from 'eslint';
 import { deepCopy } from '../__utils__/deep-copy';
 import { updatePaths } from '../__utils__/update-paths';
-import * as eslintWithErrorsWarningsTodos from './eslint-with-errors-warnings-todos.json';
-import * as eslintWithErrors from './eslint-with-errors.json';
-import * as eslintWithTodos from './eslint-with-todos.json';
+import * as stylelintWithErrorsWarningsTodos from './stylelint-with-errors-warnings-todos.json';
+import * as stylelintWithErrors from './stylelint-with-errors.json';
+import * as stylelintWithTodos from './stylelint-with-todos.json';
+import {
+  LintResultWithTodo,
+  LinterResultWithTodo,
+} from '../../src/types';
 
 const fixtures = {
-  eslintWithErrors: <ESLint.LintResult[]>(
-    (<CLIEngine.LintReport>(eslintWithErrors as unknown)).results
+  stylelintWithErrors: <LintResultWithTodo[]>(
+    (<LinterResultWithTodo>(stylelintWithErrors as unknown)).results
   ),
-  eslintWithTodos: <ESLint.LintResult[]>(
-    (<CLIEngine.LintReport>(eslintWithTodos as unknown)).results
+  stylelintWithTodos: <LintResultWithTodo[]>(
+    (<LinterResultWithTodo>(stylelintWithTodos as unknown)).results
   ),
-  eslintWithErrorsWarningsTodos: <ESLint.LintResult[]>(
-    (<CLIEngine.LintReport>(eslintWithErrorsWarningsTodos as unknown)).results
+  stylelintWithErrorsWarningsTodos: <LintResultWithTodo[]>(
+    (<LinterResultWithTodo>(stylelintWithErrorsWarningsTodos as unknown)).results
   ),
 };
 
 export default {
-  eslintWithErrors(tmp: string): ESLint.LintResult[] {
-    return updatePaths(tmp, deepCopy(fixtures.eslintWithErrors));
+  stylelintWithErrors(tmp: string): LintResultWithTodo[] {
+    return updatePaths(tmp, deepCopy(fixtures.stylelintWithErrors));
   },
-  eslintWithTodos(tmp: string): ESLint.LintResult[] {
-    return updatePaths(tmp, deepCopy(fixtures.eslintWithTodos));
+  stylelintWithTodos(tmp: string): LintResultWithTodo[] {
+    return updatePaths(tmp, deepCopy(fixtures.stylelintWithTodos));
   },
-  eslintWithErrorsWarningsTodos(tmp: string): ESLint.LintResult[] {
-    return updatePaths(tmp, deepCopy(fixtures.eslintWithErrorsWarningsTodos));
+  stylelintWithErrorsWarningsTodos(tmp: string): LintResultWithTodo[] {
+    return updatePaths(tmp, deepCopy(fixtures.stylelintWithErrorsWarningsTodos));
   },
 };

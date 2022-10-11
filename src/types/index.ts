@@ -8,8 +8,12 @@ export declare enum Severity {
   ERROR = 'error'
 }
 
+
 export type LintResultWithTodo = Omit<stylelint.LintResult, 'warnings'> & {
   warnings: TodoWarning[]
+}
+export type LinterResultWithTodo = Omit<stylelint.LinterResult, 'results'> & {
+  results: LintResultWithTodo[]
 }
 
 export type TodoWarning = Omit<stylelint.Warning, 'severity'> & {
