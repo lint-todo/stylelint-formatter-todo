@@ -62,21 +62,15 @@ export default function printResults(
       }
     }
 
-    accum += formatter(
-      result.warnings,
-      result.source ?? '',
-      (returnValue && returnValue.cwd) || process.cwd()
-    );
-
     for (const warning of result.warnings) {
       switch (warning.severity) {
-        case 'error':
+        case Severity.ERROR:
           errorCount += 1;
           break;
-        case 'warning':
+        case Severity.WARNING:
           warningCount += 1;
           break;
-        case 'todo':
+        case Severity.TODO:
           if (options.includeTodo) {
             todoCount += 1;
           }
@@ -85,6 +79,18 @@ export default function printResults(
           throw new Error(`Unknown severity: "${warning.severity}"`);
       }
     }
+
+    const nonTodoWarnings = result.warnings.filter((warning) => warning.severity !== Severity.TODO);
+
+    accum += options.includeTodo ? formatter(
+        result.warnings,
+        result.source ?? '',
+        (returnValue && returnValue.cwd) || process.cwd()
+      ) : formatter(
+        nonTodoWarnings,
+        result.source ?? '',
+        (returnValue && returnValue.cwd) || process.cwd()
+      );
 
     return accum;
   }, output);
@@ -95,17 +101,17 @@ export default function printResults(
   if (output !== '') {
     output = `\n${output}\n\n`;
 
-    const total = errorCount + warningCount + todoCount;
+    const total = errorCount + warningCount;
 
     if (total > 0) {
-      let tally =
-        `${total} ${pluralize('problem', total)}` +
+      let tally = '';
+
+      tally = options.includeTodo ? `${total} ${pluralize('problem', total)}` +
+        ` (${errorCount} ${pluralize('error', errorCount)}` +
+        `, ${warningCount} ${pluralize('warning', warningCount)}` + 
+        `, ${todoCount} ${pluralize('todo', todoCount)})` : `${total} ${pluralize('problem', total)}` +
         ` (${errorCount} ${pluralize('error', errorCount)}` +
         `, ${warningCount} ${pluralize('warning', warningCount)})`;
-
-      if (options.includeTodo) {
-        tally += `, ${todoCount} ${pluralize('warning', todoCount)})`;
-      }
 
       output += `${tally}\n\n`;
     }
@@ -114,7 +120,6 @@ export default function printResults(
   if (options.updateTodo && options.todoInfo) {
     output += formatTodoSummary(options.todoInfo);
   }
-
   return output;
 }
 

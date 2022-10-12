@@ -3,9 +3,12 @@ import prepareFormatterOutput from '../__utils__/prepare-formatter-output';
 import printResults from '../../src/print-results';
 import {
 	LintResultWithTodo,
+	TodoFormatterOptions,
 } from '../../src/types';
+import fixtures from '../__fixtures__/fixtures';
+import { WriteTodoOptions } from '@lint-todo/utils';
 
-function getOptions(options = {}) {
+function getOptions(options = {}): TodoFormatterOptions {
   return Object.assign(
     {},
     {
@@ -14,7 +17,7 @@ function getOptions(options = {}) {
       includeTodo: false,
       shouldCleanTodos: true,
       todoInfo: undefined,
-      writeTodoOptions: {},
+      writeTodoOptions: {} as WriteTodoOptions,
     },
     options
   );
@@ -46,7 +49,7 @@ describe('printResults', () => {
 			},
 		];
 
-		const output = printResults(results, getOptions());
+		const output = prepareFormatterOutput(results, printResults, getOptions());
 
 		expect(output).toBe('');
 	});
@@ -71,7 +74,7 @@ describe('printResults', () => {
 			},
 		];
 
-		const output = prepareFormatterOutput(results, printResults);
+		const output = prepareFormatterOutput(results, printResults, getOptions());
 		expect(output).toBe(stripIndent(`
 path/to/file.css
  1:1  ×  Unexpected foo  bar
@@ -99,7 +102,7 @@ path/to/file.css
 			},
 		];
 
-		const output = prepareFormatterOutput(results, printResults);
+		const output = prepareFormatterOutput(results, printResults, getOptions());
 
 		expect(output).toBe(stripIndent`
 path/to/file.css
@@ -130,7 +133,7 @@ path/to/file.css
 			},
 		];
 
-		const output = prepareFormatterOutput(results, printResults);
+		const output = prepareFormatterOutput(results, printResults, getOptions());
 
 		expect(output).toBe(stripIndent`
 path/to/file.css
@@ -163,7 +166,7 @@ path/to/file.css
 			},
 		];
 
-		const output = prepareFormatterOutput(results, printResults);
+		const output = prepareFormatterOutput(results, printResults, getOptions());
 
 		expect(output).toBe(stripIndent`
 path/to/file.css
@@ -212,7 +215,7 @@ path/to/file.css
 			},
 		];
 
-		const output = prepareFormatterOutput(results, printResults);
+		const output = prepareFormatterOutput(results, printResults, getOptions());
 
 		expect(output).toBe(stripIndent`
 Invalid Option: Unexpected option for baz
@@ -232,7 +235,7 @@ Deprecation Warning: Deprecated foo See: bar`);
 			},
 		];
 
-		const output = prepareFormatterOutput(results, printResults);
+		const output = prepareFormatterOutput(results, printResults, getOptions());
 
 		expect(output).toBe('');
 	});
@@ -257,12 +260,55 @@ Deprecation Warning: Deprecated foo See: bar`);
 			},
 		];
 
-		const output = prepareFormatterOutput(results, printResults);
+		const output = prepareFormatterOutput(results, printResults, getOptions());
 
 		expect(output).toBe(stripIndent`
 path/to/file.css
  1:1  ×     bar
 
 1 problem (1 error, 0 warnings)`);
+	});
+
+	it('should not return anything when includeTodo is false and there are only todo items', async () => {
+    const results = fixtures.stylelintWithTodos('stable/path');
+
+		const output = prepareFormatterOutput(results, printResults, getOptions());
+		expect(output).toBe('');
+  });
+
+	it('should return errors, warnings, and todo items when includeTodo is true', async () => {
+		const results = fixtures.stylelintWithErrorsWarningsTodos('stable/path');
+	
+		const output = prepareFormatterOutput(results, printResults, getOptions({
+			includeTodo: true,
+		}));
+		expect(output).toBe(stripIndent`
+stable/path/app/styles/_file-one.scss
+ 3:12  ×  Unexpected unknown unit \"x\"  unit-no-unknown
+ 6:12  ‼  Unexpected unknown unit "x"  unit-no-unknown
+ 9:12  i  Unexpected unknown unit \"x\"  unit-no-unknown
+
+stable/path/app/styles/_file-two.scss
+ 3:12  ×  You should not have an empty block  block-no-empty
+ 6:12  ‼  You should not have an empty block  block-no-empty
+ 9:12  i  You should not have an empty block  block-no-empty
+
+4 problems (2 errors, 2 warnings, 2 todos)`);
+	});
+
+	it('should only return errors and warnings if includeTodo is false and there are errors, warnings, and todo items', async () => {
+		const results = fixtures.stylelintWithErrorsWarningsTodos('stable/path');
+	
+		const output = prepareFormatterOutput(results, printResults, getOptions());
+		expect(output).toBe(stripIndent`
+stable/path/app/styles/_file-one.scss
+ 3:12  ×  Unexpected unknown unit \"x\"  unit-no-unknown
+ 6:12  ‼  Unexpected unknown unit "x"  unit-no-unknown
+
+stable/path/app/styles/_file-two.scss
+ 3:12  ×  You should not have an empty block  block-no-empty
+ 6:12  ‼  You should not have an empty block  block-no-empty
+
+4 problems (2 errors, 2 warnings)`);
 	});
 });
