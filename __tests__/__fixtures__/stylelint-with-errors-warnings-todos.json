@@ -2,7 +2,7 @@
   "cwd": "",
   "results": [
     {
-      "source": "{{path}}/app/styles/_file-two.scss", 
+      "source": "{{path}}/app/styles/_file-one.scss", 
       "errored": true, 
       "warnings": [
         {
@@ -48,7 +48,7 @@
           "endColumn": 15,
           "rule": "block-no-empty",
           "severity": "error",
-          "text": "Unexpected unknown unit \"x\" (unit-no-unknown)"
+          "text": "You should not have an empty block (block-no-empty)"
         },
         {
           "line": 6,
@@ -57,7 +57,7 @@
           "endColumn": 15,
           "rule": "block-no-empty",
           "severity": "warning",
-          "text": "Unexpected unknown unit \"x\" (unit-no-unknown)"
+          "text": "You should not have an empty block (block-no-empty)"
         },
         {
           "line": 9,

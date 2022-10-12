@@ -1,7 +1,7 @@
 import type { TodoConfig, WriteTodoOptions } from '@lint-todo/utils';
 import stylelint from 'stylelint';
 
-export declare enum Severity {
+export enum Severity {
   TODO = 'todo',
   OFF = 'off',
   WARNING = 'warning',

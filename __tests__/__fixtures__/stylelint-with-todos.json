@@ -48,7 +48,7 @@
           "endColumn": 15,
           "rule": "block-no-empty",
           "severity": "todo",
-          "text": "Unexpected unknown unit \"x\" (unit-no-unknown)"
+          "text": "You should not have an empty block (block-no-empty)"
         },
         {
           "line": 6,
@@ -57,7 +57,7 @@
           "endColumn": 15,
           "rule": "block-no-empty",
           "severity": "todo",
-          "text": "Unexpected unknown unit \"x\" (unit-no-unknown)"
+          "text": "You should not have an empty block (block-no-empty)"
         },
         {
           "line": 9,
