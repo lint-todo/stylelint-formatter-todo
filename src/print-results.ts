@@ -41,6 +41,7 @@ export default function printResults(
     return sarifFormatter(results);
   }
 
+  console.log('i am a test');
   output += deprecationsFormatter(results);
 
   let errorCount = 0;
