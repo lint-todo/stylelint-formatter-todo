@@ -23,6 +23,7 @@ jobs:
       - uses: actions/checkout@v1
       - uses: volta-cli/action@v1
         with:
+          volta-version: 1.0.8
           node-version: ${{ matrix.node }}
       - name: install dependencies
         run: npm install
