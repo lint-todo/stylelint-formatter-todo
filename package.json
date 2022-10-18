@@ -1,15 +1,15 @@
 {
-  "name": "@lint-todo/eslint-formatter-todo",
+  "name": "@lint-todo/stylelint-formatter-todo",
   "version": "4.0.0",
-  "description": "An ESLint formatter that can report errors as todos.",
+  "description": "A Stylelint formatter that can report errors as todos.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lint-todo/eslint-formatter-todo.git"
+    "url": "git+https://github.com/lint-todo/stylelint-formatter-todo.git"
   },
   "license": "MIT",
   "contributors": [
-    "Steve Calvert <steve.calvert@gmail.com>",
-    "Renato Iwashima <renatoiwa@gmail.com>"
+    "Jacky Lei <jackyleichicago@gmail.com>",
+    "Steve Calvert <steve.calvert@gmail.com>"
   ],
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -69,7 +69,8 @@
     "typescript": "^4.0.3"
   },
   "peerDependencies": {
-    "eslint": "^8.4.0"
+    "eslint": "^8.4.0",
+    "stylelint": "^14.12.1"
   },
   "engines": {
     "node": ">= 14"
@@ -100,13 +101,13 @@
     "node": "14.20.0"
   },
   "bugs": {
-    "url": "https://github.com/lint-todo/eslint-formatter-todo/issues"
+    "url": "https://github.com/lint-todo/stylelint-formatter-todo/issues"
   },
-  "homepage": "https://github.com/lint-todo/eslint-formatter-todo#readme",
+  "homepage": "https://github.com/lint-todo/stylelint-formatter-todo#readme",
   "directories": {
     "lib": "lib"
   },
   "keywords": [
-    "eslint"
+    "stylelint"
   ]
 }
