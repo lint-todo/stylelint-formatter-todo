@@ -101,4 +101,22 @@ describe('format-results', () => {
       });
     });
   });
+
+  it('changes updates the errored state if all errors are present in the todo map', () => {
+    const results = fixtures.stylelintWithErrors(tmpDir.name);
+
+    // build todo map but without the last result in the results array (so they differ)
+    const todoResults = [...results];
+    const todos = buildMaybeTodos(tmpDir.name, todoResults);
+
+    updateResults(results, todos);
+
+    results.forEach((result) => {
+      expect(result.errored).toEqual(false);
+      
+      result.warnings.forEach((warning) => {
+        expect(warning.severity).toEqual(Severity.TODO);
+      });
+    });
+  });
 });
