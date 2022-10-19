@@ -165,8 +165,12 @@ function processResults(
     if (!warning) {
       continue;
     }
-
+    
     warning.severity = <Severity>severity;
+
+    // The warning object does not have an error count for us to reference
+    // In order to update the errored state without adding the error count field we need to do a search 
+    result.errored = result.warnings.some(warning => warning.severity === Severity.ERROR);
   }
 }
 
