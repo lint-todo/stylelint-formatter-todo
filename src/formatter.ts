@@ -165,7 +165,7 @@ function processResults(
     if (!warning) {
       continue;
     }
-    
+
     warning.severity = <Severity>severity;
 
     // The warning object does not have an error count for us to reference
