@@ -11,7 +11,7 @@ import { BinTesterProject } from '@scalvert/bin-tester';
 const DEFAULT_STYLELINT_CONFIG = `{
   "rules": {
     "no-irregular-whitespace": true,
-    "color-no-hex": true,
+    "color-no-hex": true
   }
 }
 `;
@@ -20,7 +20,7 @@ export class FakeProject extends BinTesterProject {
   static async getInstance(): Promise<FakeProject> {
     const project = new this();
 
-    project.files['stylelintrc.js'] = DEFAULT_STYLELINT_CONFIG;
+    project.files['stylelint-config.json'] = DEFAULT_STYLELINT_CONFIG;
 
     await project.write();
     // link binary
