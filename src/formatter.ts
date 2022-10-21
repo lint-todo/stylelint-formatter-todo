@@ -27,7 +27,7 @@ const SEVERITY_INT_MAP = {
   [2]: Severity.ERROR
 };
 
-export async function formatter(results: LintResultWithTodo[]): Promise<string> {
+export function formatter(results: LintResultWithTodo[]): string {
   const baseDir = getBaseDir();
   const todoConfigResult = validateConfig(baseDir);
 
