@@ -27,6 +27,8 @@ describe('eslint with todo formatter', function () {
       './stylelint-config.json',
       '--custom-formatter',
       require.resolve('../..'),
+      // test all files under src/ folder
+      'src/',
     ],
     createProject: async () => FakeProject.getInstance(),
   });
@@ -42,10 +44,10 @@ describe('eslint with todo formatter', function () {
   it('errors if todo config exists in both package.json and .lint-todorc.js', async function () {
     await project.write({
       src: {
-        'no-problems.scss': getStringFixture('with-no-problems.scss'),
+        'no-problems.css': getStringFixture('with-no-problems.css'),
       },
     });
-    
+
     await project.setShorthandPackageJsonTodoConfig({
       warn: 5,
       error: 10,
@@ -56,24 +58,18 @@ describe('eslint with todo formatter', function () {
       error: 10,
     });
 
-    debugger;
-    try {
-      const result = await runBin();
-      debugger;
-      expect(result.exitCode).toBeGreaterThan(0);
-      expect(result.stderr).toMatch(
-        /You cannot have todo configurations in both package.json and .lint-todorc.js. Please move the configuration from the package.json to the .lint-todorc.js/
-      );
-    } catch(e) {
-      debugger;
+    const result = await runBin();
 
-    }
+    expect(result.exitCode).toBeGreaterThan(0);
+    expect(result.stderr).toMatch(
+      /You cannot have todo configurations in both package.json and .lint-todorc.js. Please move the configuration from the package.json to the .lint-todorc.js/
+    );
   });
 
   it('should not emit anything when there are no errors or warnings', async () => {
     await project.write({
       src: {
-        'no-problems.scss': getStringFixture('with-no-problems.scss'),
+        'no-problems.css': getStringFixture('with-no-problems.css'),
       },
     });
 
