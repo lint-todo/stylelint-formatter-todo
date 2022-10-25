@@ -9,11 +9,13 @@ import { buildReadOptions } from '../__utils__/build-read-options';
 import { deepCopy } from '../__utils__/deep-copy';
 import { setUpdateTodoEnv } from '../__utils__/set-env';
 import { Severity } from '../../src/types';
+import { LinterResult } from 'stylelint';
 
 describe('format-results', () => {
   const INITIAL_ENV = process.env;
 
   let tmpDir: DirResult;
+  const returnValue = {} as LinterResult;
 
   beforeEach(() => {
     tmpDir = dirSync({ unsafeCleanup: true });
@@ -31,7 +33,7 @@ describe('format-results', () => {
 
     const results = fixtures.stylelintWithErrors(tmpDir.name);
 
-    formatter(results);
+    formatter(results, returnValue);
 
     expect(todoStorageFileExists(tmpDir.name)).toBe(false);
   });
@@ -41,7 +43,7 @@ describe('format-results', () => {
 
     const results = fixtures.stylelintWithErrors(tmpDir.name);
 
-    formatter(results);
+    formatter(results, returnValue);
 
     expect(todoStorageFileExists(tmpDir.name)).toBe(true);
 
@@ -61,7 +63,7 @@ describe('format-results', () => {
     const results = fixtures.stylelintWithErrors(tmpDir.name);
     const expected = deepCopy(results);
 
-    formatter(results);
+    formatter(results, returnValue);
 
     expect(results).toEqual(expected);
   });
@@ -72,7 +74,7 @@ describe('format-results', () => {
     const results = fixtures.stylelintWithErrors(tmpDir.name);
     const notExpected = deepCopy(results);
 
-    formatter(results);
+    formatter(results, returnValue);
 
     expect(results).not.toEqual(notExpected);
   });

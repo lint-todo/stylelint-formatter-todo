@@ -1,6 +1,6 @@
 import { join, resolve } from 'path';
-import { ESLint } from 'eslint';
 import { readFileSync, readJsonSync } from 'fs-extra';
+import { LintResultWithTodo } from '../../src/types';
 
 const cache: Map<string, string> = new Map();
 
@@ -21,7 +21,7 @@ export function getStringFixture(fileName: string): string {
   return contents;
 }
 
-export function getObjectFixture<T extends ESLint.LintResult>(
+export function getObjectFixture<T extends LintResultWithTodo>(
   fileName: string,
   tmp: string
 ): T[] {
@@ -37,11 +37,11 @@ export function getObjectFixture<T extends ESLint.LintResult>(
   );
 }
 
-function updatePaths<T extends { filePath: string }>(
+function updatePaths<T extends { source?: string }>(
   path: string,
   data: T[]
 ): T[] {
-  data.forEach((d) => (d.filePath = d.filePath.replace('{{path}}', path)));
+  data.forEach((d) => (d.source = d.source?.replace('{{path}}', path)));
 
   return data;
 }
