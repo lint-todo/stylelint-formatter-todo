@@ -300,8 +300,8 @@ function formatter(
     const { line, column, severity, rule } = message;
 
     const row: string[] = [
-      line ? line.toString() : '',
-      column ? column.toString() : '',
+      Number.isInteger(line) ? line.toString() : '',
+      Number.isInteger(column) ? column.toString() : '',
       symbols[severity] ? levelColors[severity](symbols[severity]) : severity,
       formatMessageText(message),
       dim(rule || ''),

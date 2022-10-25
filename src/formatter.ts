@@ -99,12 +99,7 @@ export function formatter(results: LintResultWithTodo[], returnValue: LinterResu
     });
   }
 
-  // Change errored state if there are no more errors as a result of converting to todos
-  if (updateTodo || includeTodo) {
-    returnValue.errored = results.some(result => {
-      result.errored
-    })
-  }
+  updateErroredState(results, returnValue);
 
   return printResults(results, {
     formatTodoAs,
@@ -175,10 +170,6 @@ function processResults(
     }
 
     warning.severity = <Severity>severity;
-
-    // The warning object does not have an error count for us to reference
-    // In order to update the errored state without adding the error count field we need to do a search 
-    result.errored = result.warnings.some(warning => warning.severity === Severity.ERROR);
   }
 }
 
@@ -236,9 +227,9 @@ function pushResult(results: LintResultWithTodo[], todo: TodoData) {
   const todoWarning: TodoWarning = {
     rule: 'invalid-todo-violation-rule',
     text: `Todo violation passes \`${todo.ruleId}\` rule. Please run with \`CLEAN_TODO=1\` env var to remove this todo from the todo list.`,
-    severity: 'todo',
+    severity: 'error',
     column: 0,
-    line: 0,
+    line: 0
   };
 
   if (resultForFile) {
@@ -258,4 +249,22 @@ function findResult(results: LintResultWithTodo[], todo: TodoData) {
   return results.find(
     (result) => relative(getBaseDir(), result.source ?? '') === todo.filePath
   );
+}
+
+/**
+ * Updates the errored state in the results and the return value used as the exitCode
+ * This is due required as the errored state may no longer be accurate due to
+ * flipping errors into todos and also adding new errors as a result of todo violations
+ * @param results 
+ * @param returnValue 
+ */
+export function updateErroredState(results: LintResultWithTodo[], returnValue: LinterResult) {
+  let errored = false;
+
+  results.forEach(result => {
+    result.errored = result.warnings.some(warning => warning.severity === Severity.ERROR);
+    errored = errored || result.errored;
+  })
+
+  returnValue.errored = errored
 }
