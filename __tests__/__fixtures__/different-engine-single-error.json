@@ -1,0 +1,31 @@
+{
+  "cwd": "",
+  "results": [
+    {
+      "source": "{{path}}/app/styles/_file-one.scss", 
+      "errored": true, 
+      "warnings": [
+        {
+          "line": 3,
+          "column": 12,
+          "endLine": 4,
+          "endColumn": 15,
+          "rule": "unit-no-unknown",
+          "severity": "error",
+          "text": "Unexpected unknown unit \"x\" (unit-no-unknown)"
+        }
+      ],
+      "deprecations": [],
+      "invalidOptionWarnings": [],
+      "ignored": false
+    }
+  ],
+  "errored": true,
+  "output": null,
+  "maxWarningsExceeded": null,
+  "reportedDisables": null,
+  "descriptionlessDisables": null,
+  "needlessDisables": null,
+  "invalidScopeDisables": null,
+  "ruleMetadata": {}
+}

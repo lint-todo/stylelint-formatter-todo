@@ -101,15 +101,17 @@ export default function printResults(
   if (output !== '') {
     output = `\n${output}\n\n`;
 
-    const total = errorCount + warningCount;
-
+    // Problems are defined as warnings and errors
+    const problemTotal = errorCount + warningCount;
+    const total = problemTotal + todoCount;
+    
     if (total > 0) {
       let tally = '';
 
-      tally = options.includeTodo ? `${total} ${pluralize('problem', total)}` +
+      tally = options.includeTodo ? `${problemTotal} ${pluralize('problem', problemTotal)}` +
         ` (${errorCount} ${pluralize('error', errorCount)}` +
         `, ${warningCount} ${pluralize('warning', warningCount)}` + 
-        `, ${todoCount} ${pluralize('todo', todoCount)})` : `${total} ${pluralize('problem', total)}` +
+        `, ${todoCount} ${pluralize('todo', todoCount)})` : `${problemTotal} ${pluralize('problem', problemTotal)}` +
         ` (${errorCount} ${pluralize('error', errorCount)}` +
         `, ${warningCount} ${pluralize('warning', warningCount)})`;
 

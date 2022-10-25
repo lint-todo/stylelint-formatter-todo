@@ -19,6 +19,7 @@ import { join, relative } from 'path';
 import { getBaseDir } from './get-base-dir';
 import { LintResultWithTodo, Severity, TodoFormatterOptions, TodoWarning } from './types';
 import printResults from './print-results';
+import { LinterResult } from 'stylelint';
 
 const SEVERITY_INT_MAP = {
   [-1]: Severity.TODO,
@@ -27,7 +28,7 @@ const SEVERITY_INT_MAP = {
   [2]: Severity.ERROR
 };
 
-export async function formatter(results: LintResultWithTodo[]): Promise<string> {
+export function formatter(results: LintResultWithTodo[], returnValue: LinterResult): string {
   const baseDir = getBaseDir();
   const todoConfigResult = validateConfig(baseDir);
 
@@ -96,6 +97,13 @@ export async function formatter(results: LintResultWithTodo[]): Promise<string> 
       todoInfo,
       writeTodoOptions: optionsForFile,
     });
+  }
+
+  // Change errored state if there are no more errors as a result of converting to todos
+  if (updateTodo || includeTodo) {
+    returnValue.errored = results.some(result => {
+      result.errored
+    })
   }
 
   return printResults(results, {
