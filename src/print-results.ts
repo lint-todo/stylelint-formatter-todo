@@ -37,8 +37,8 @@ export default function printResults(
 ): string {
   let output = invalidOptionsFormatter(results);
 
-  if (options.formatTodoAs) {
-    return sarifFormatter(results);
+  if (options.formatTodoAsSarif) {
+    return sarifFormatter(filterTodos(results));
   }
 
   output += deprecationsFormatter(results);
@@ -343,4 +343,18 @@ function formatter(
 
 function pluralize(word: string, count: number): string {
   return count === 1 ? word : `${word}s`;
+}
+
+function filterTodos(results: LintResultWithTodo[]): LintResultWithTodo[] {
+  return results.reduce((acc, result) => {
+    return [
+      ...acc,
+      {
+        ...result,
+        warnings: result.warnings.filter(
+          (warning: TodoWarning) => warning.severity !== Severity.TODO
+        )
+      },
+    ];
+  }, [] as LintResultWithTodo[]);
 }

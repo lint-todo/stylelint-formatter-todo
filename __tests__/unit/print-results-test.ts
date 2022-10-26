@@ -12,7 +12,7 @@ function getOptions(options = {}): TodoFormatterOptions {
   return Object.assign(
     {},
     {
-      formatTodoAs: undefined,
+      formatTodoAsSarif: undefined,
       updateTodo: false,
       includeTodo: false,
       shouldCleanTodos: true,
@@ -311,4 +311,17 @@ stable/path/app/styles/_file-two.scss
 
 4 problems (2 errors, 2 warnings)`);
 	});
+
+	it('should format errors and warnings to sarif when using formatTodoAsSarif', async () => {
+    const results = fixtures.stylelintWithErrorsWarningsTodos('/stable/path');
+
+    const formattedResults = printResults(
+      results,
+      getOptions({
+        formatTodoAsSarif: '1',
+      })
+    );
+
+    expect(formattedResults).toMatch('sarif');
+  });
 });

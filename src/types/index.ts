@@ -29,7 +29,7 @@ export type TodoInfo =
   | undefined;
 
 export interface TodoFormatterOptions {
-  formatTodoAs: string | undefined;
+  formatTodoAsSarif?: boolean;
   updateTodo: boolean;
   includeTodo: boolean;
   shouldCleanTodos: boolean;
@@ -38,7 +38,7 @@ export interface TodoFormatterOptions {
 }
 
 export interface TodoPrintOptions {
-  formatTodoAs?: string;
+  formatTodoAsSarif?: boolean;
   updateTodo?: boolean;
   includeTodo?: boolean;
   shouldCleanTodos?: boolean;

@@ -1104,4 +1104,58 @@ describe('stylelint with todo formatter', function () {
       }
     });
   }
+
+  it('when given FORMAT_TODO_AS_SARIF will output with sarif format', async () => {
+    await project.write({
+      src: {
+        'with-errors-0.css': getStringFixture('with-errors-0.css'),
+      },
+    });
+
+    const result = await runBin({
+      env: {
+        FORMAT_TODO_AS_SARIF: '1',
+      },
+    });
+
+    expect(JSON.parse(result.stdout)).toBeValidSarifLog();
+  });
+
+  it('when given FORMAT_TODO_AS_SARIF will ensure that results provided do not include todos', async () => {
+    await project.write({
+      src: {
+        'with-errors-0.css': getStringFixture('with-errors-0.css'),
+      },
+    });
+
+    let result = await runBin();
+
+    expect(result.stdout).toMatch(/1 problem \(1 error, 0 warnings\)/);
+
+    result = await runBin({
+      env: {
+        UPDATE_TODO: '1',
+      },
+    });
+
+    // we should have created todos for all of the errors
+    expect(result.stdout).toMatch(
+      '1 todos created, 0 todos removed (warn after 30, error after 60 days)'
+    );
+
+    result = await runBin({
+      env: {
+        FORMAT_TODO_AS_SARIF: '1',
+      },
+    });
+
+    // extract errors from SARIF results, we should continue to have no errors (todos are respected with external formatter)
+    const potentialErrors = JSON.parse(result.stdout).runs[0].results.reduce(
+      (acc: string[], result: any) =>
+        result.level === 'error' ? [...acc, result.message.text] : acc,
+      []
+    );
+
+    expect(potentialErrors).toHaveLength(0);
+  });
 });

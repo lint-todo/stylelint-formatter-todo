@@ -48,7 +48,7 @@ export function formatter(results: LintResultWithTodo[], returnValue: LinterResu
     todoConfig: getTodoConfig(process.cwd(), 'stylelint') ?? {},
   };
 
-  const formatTodoAs = process.env.FORMAT_TODO_AS;
+  const formatTodoAsSarif = process.env.FORMAT_TODO_AS_SARIF === '1';
   const updateTodo = process.env.UPDATE_TODO === '1';
   const includeTodo = process.env.INCLUDE_TODO === '1';
   const cleanTodo = !process.env.NO_CLEAN_TODO && !ci.isCI;
@@ -90,7 +90,7 @@ export function formatter(results: LintResultWithTodo[], returnValue: LinterResu
     }
 
     processResults(results, maybeTodos, {
-      formatTodoAs,
+      formatTodoAsSarif,
       updateTodo,
       includeTodo,
       shouldCleanTodos,
@@ -102,7 +102,7 @@ export function formatter(results: LintResultWithTodo[], returnValue: LinterResu
   updateErroredState(results, returnValue);
 
   return printResults(results, {
-    formatTodoAs,
+    formatTodoAsSarif,
     updateTodo,
     includeTodo,
     shouldCleanTodos,
