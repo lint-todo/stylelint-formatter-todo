@@ -3,7 +3,7 @@ import {
   todoStorageFileExists,
 } from '@lint-todo/utils';
 import { DirResult, dirSync } from 'tmp';
-import { buildMaybeTodos, formatter, updateResults } from '../../src/formatter';
+import { buildMaybeTodos, formatter, updateResults, updateErroredState } from '../../src/formatter';
 import fixtures from '../__fixtures__/fixtures';
 import { buildReadOptions } from '../__utils__/build-read-options';
 import { deepCopy } from '../__utils__/deep-copy';
@@ -112,6 +112,7 @@ describe('format-results', () => {
     const todos = buildMaybeTodos(tmpDir.name, todoResults);
 
     updateResults(results, todos);
+    updateErroredState(results, {} as LinterResult);
 
     results.forEach((result) => {
       expect(result.errored).toEqual(false);
