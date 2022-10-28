@@ -31,7 +31,7 @@
     "has-flag": "^4.0.0",
     "picocolors": "^1.0.0",
     "string-width": "^4.2.3",
-    "strip-ansi": "^6.0.1",
+    "strip-ansi": "^7.0.1",
     "supports-hyperlinks": "^2.3.0",
     "table": "^6.8.0",
     "text-table": "^0.2.0",
