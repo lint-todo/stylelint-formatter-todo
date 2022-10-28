@@ -1,6 +1,6 @@
 {
   "name": "@lint-todo/stylelint-formatter-todo",
-  "version": "4.0.0",
+  "version": "0.0.1",
   "description": "A Stylelint formatter that can report errors as todos.",
   "repository": {
     "type": "git",
