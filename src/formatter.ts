@@ -1,3 +1,4 @@
+import fs from 'fs';
 import {
   applyTodoChanges,
   buildTodoDatum,
@@ -6,6 +7,7 @@ import {
   getSeverity,
   getTodoConfig,
   Severity as SeverityIntegers,
+  Range,
   TodoConfig,
   TodoData,
   todoStorageFileExists,
@@ -26,12 +28,16 @@ import {
 import printResults from './print-results';
 import { LinterResult } from 'stylelint';
 
+const LINES_PATTERN = /(.*?(?:\r\n?|\n|$))/gm;
+
 const STYLELINT_SEVERITY = {
   [-1]: Severity.TODO,
   [0]: Severity.OFF,
   [1]: Severity.WARNING,
   [2]: Severity.ERROR,
 };
+
+const sourceCache = new Map<string, string>();
 
 export function formatter(
   results: LintResultWithTodo[],
@@ -190,6 +196,8 @@ export function buildMaybeTodos(
   const results = lintResults.filter((result) => result.warnings.length > 0);
 
   const todoData = results.reduce((converted, lintResult) => {
+    const source = getSource(lintResult.source);
+
     lintResult.warnings.forEach((warning) => {
       if (warning.severity !== Severity.ERROR) {
         return;
@@ -213,8 +221,9 @@ export function buildMaybeTodos(
           filePath: lintResult.source ?? '',
           ruleId: warning.rule ?? '',
           range,
-          // Stylelint does not have source as a part of its warning
-          source: '',
+          source: source
+            ? getSourceForRange(source.match(LINES_PATTERN) || [], range)
+            : '',
           originalLintResult: warning,
         },
         todoConfig
@@ -227,6 +236,49 @@ export function buildMaybeTodos(
   }, new Set<TodoData>());
 
   return todoData;
+}
+
+function getSourceForRange(source: string[], range: Range) {
+  const firstLine = range.start.line - 1;
+  const lastLine = range.end.line - 1;
+  let currentLine = firstLine - 1;
+  const firstColumn = range.start.column - 1;
+  const lastColumn = range.end.column - 1;
+  const src = [];
+  let line;
+
+  while (currentLine < lastLine) {
+    currentLine++;
+    line = source[currentLine];
+
+    if (currentLine === firstLine) {
+      if (firstLine === lastLine) {
+        src.push(line.slice(firstColumn, lastColumn));
+      } else {
+        src.push(line.slice(firstColumn));
+      }
+    } else if (currentLine === lastLine) {
+      src.push(line.slice(0, lastColumn));
+    } else {
+      src.push(line);
+    }
+  }
+
+  return src.join('');
+}
+
+function getSource(filePath: string | undefined) {
+  if (!filePath) {
+    return '';
+  }
+
+  if (fs.existsSync(filePath) && !sourceCache.has(filePath)) {
+    const source = fs.readFileSync(filePath, { encoding: 'utf8' });
+
+    sourceCache.set(filePath, source);
+  }
+
+  return sourceCache.get(filePath) || '';
 }
 
 function pushResult(results: LintResultWithTodo[], todo: TodoData) {
