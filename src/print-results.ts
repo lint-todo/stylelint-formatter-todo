@@ -2,7 +2,7 @@ import path from 'path';
 import stringWidth from 'string-width';
 import * as table from 'table';
 import { yellow, dim, underline, red, green, cyan } from 'picocolors';
-import stylelint from 'stylelint';
+import { LintResult, Warning } from 'stylelint';
 import { terminalLink } from './terminal-link';
 import {
   ColumnWidths,
@@ -12,7 +12,8 @@ import {
   TodoPrintOptions,
   TodoInfo,
 } from './types';
-import sarifFormatter from 'stylelint-sarif-formatter';
+import { getFormatter } from './get-formatter';
+import { getBaseDir } from './get-base-dir';
 
 const MARGIN_WIDTHS = 9;
 
@@ -30,15 +31,18 @@ const symbols = {
   todo: cyan('ℹ'),
 };
 
+const DEFAULT_RETURN_VALUE = { cwd: getBaseDir() };
+
 export default function printResults(
   results: LintResultWithTodo[],
   options: TodoPrintOptions = {},
-  returnValue?: stylelint.LinterResult
+  returnValue = DEFAULT_RETURN_VALUE
 ): string {
   let output = invalidOptionsFormatter(results);
 
   if (options.formatTodoAs) {
-    return sarifFormatter(results);
+    const formatter = getFormatter(options.formatTodoAs);
+    return formatter(filterTodos(results));
   }
 
   output += deprecationsFormatter(results);
@@ -80,17 +84,21 @@ export default function printResults(
       }
     }
 
-    const nonTodoWarnings = result.warnings.filter((warning) => warning.severity !== Severity.TODO);
+    const nonTodoWarnings = result.warnings.filter(
+      (warning) => warning.severity !== Severity.TODO
+    );
 
-    accum += options.includeTodo ? formatter(
-        result.warnings,
-        result.source ?? '',
-        (returnValue && returnValue.cwd) || process.cwd()
-      ) : formatter(
-        nonTodoWarnings,
-        result.source ?? '',
-        (returnValue && returnValue.cwd) || process.cwd()
-      );
+    accum += options.includeTodo
+      ? formatter(
+          result.warnings,
+          result.source ?? '',
+          (returnValue && returnValue.cwd) || process.cwd()
+        )
+      : formatter(
+          nonTodoWarnings,
+          result.source ?? '',
+          (returnValue && returnValue.cwd) || process.cwd()
+        );
 
     return accum;
   }, output);
@@ -104,16 +112,18 @@ export default function printResults(
     // Problems are defined as warnings and errors
     const problemTotal = errorCount + warningCount;
     const total = problemTotal + todoCount;
-    
+
     if (total > 0) {
       let tally = '';
 
-      tally = options.includeTodo ? `${problemTotal} ${pluralize('problem', problemTotal)}` +
-        ` (${errorCount} ${pluralize('error', errorCount)}` +
-        `, ${warningCount} ${pluralize('warning', warningCount)}` + 
-        `, ${todoCount} ${pluralize('todo', todoCount)})` : `${problemTotal} ${pluralize('problem', problemTotal)}` +
-        ` (${errorCount} ${pluralize('error', errorCount)}` +
-        `, ${warningCount} ${pluralize('warning', warningCount)})`;
+      tally = options.includeTodo
+        ? `${problemTotal} ${pluralize('problem', problemTotal)}` +
+          ` (${errorCount} ${pluralize('error', errorCount)}` +
+          `, ${warningCount} ${pluralize('warning', warningCount)}` +
+          `, ${todoCount} ${pluralize('todo', todoCount)})`
+        : `${problemTotal} ${pluralize('problem', problemTotal)}` +
+          ` (${errorCount} ${pluralize('error', errorCount)}` +
+          `, ${warningCount} ${pluralize('warning', warningCount)})`;
 
       output += `${tally}\n\n`;
     }
@@ -343,4 +353,18 @@ function formatter(
 
 function pluralize(word: string, count: number): string {
   return count === 1 ? word : `${word}s`;
+}
+
+function filterTodos(results: LintResultWithTodo[]): LintResult[] {
+  return results.reduce((acc, result) => {
+    return [
+      ...acc,
+      {
+        ...result,
+        warnings: result.warnings.filter(
+          (message: TodoWarning) => message.severity !== Severity.TODO
+        ) as Warning[],
+      },
+    ];
+  }, [] as LintResult[]);
 }

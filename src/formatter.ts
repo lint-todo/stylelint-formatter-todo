@@ -11,24 +11,32 @@ import {
   todoStorageFileExists,
   validateConfig,
   WriteTodoOptions,
-  writeTodos
+  writeTodos,
 } from '@lint-todo/utils';
 import ci from 'ci-info';
 import hasFlag from 'has-flag';
 import { join, relative } from 'path';
 import { getBaseDir } from './get-base-dir';
-import { LintResultWithTodo, Severity, TodoFormatterOptions, TodoWarning } from './types';
+import {
+  LintResultWithTodo,
+  Severity,
+  TodoFormatterOptions,
+  TodoWarning,
+} from './types';
 import printResults from './print-results';
 import { LinterResult } from 'stylelint';
 
-const SEVERITY_INT_MAP = {
+const STYLELINT_SEVERITY = {
   [-1]: Severity.TODO,
   [0]: Severity.OFF,
   [1]: Severity.WARNING,
-  [2]: Severity.ERROR
+  [2]: Severity.ERROR,
 };
 
-export function formatter(results: LintResultWithTodo[], returnValue: LinterResult): string {
+export function formatter(
+  results: LintResultWithTodo[],
+  returnValue: LinterResult
+): string {
   const baseDir = getBaseDir();
   const todoConfigResult = validateConfig(baseDir);
 
@@ -143,13 +151,13 @@ function processResults(
  *
  * @param results Stylelint results array
  */
- export function updateResults(
+export function updateResults(
   results: LintResultWithTodo[],
   existingTodos: Set<TodoData>
 ): void {
   for (const todo of existingTodos) {
     const SeverityInteger: SeverityIntegers = getSeverity(todo);
-    const severity: Severity = SEVERITY_INT_MAP[SeverityInteger];
+    const severity: Severity = STYLELINT_SEVERITY[SeverityInteger];
 
     if (severity === Severity.ERROR) {
       continue;
@@ -197,7 +205,7 @@ export function buildMaybeTodos(
           column: warning.endColumn ?? warning.column,
         },
       };
-      
+
       const todoDatum = buildTodoDatum(
         baseDir,
         {
@@ -205,7 +213,7 @@ export function buildMaybeTodos(
           filePath: lintResult.source ?? '',
           ruleId: warning.rule ?? '',
           range,
-					// Stylelint does not have source as a part of its warning
+          // Stylelint does not have source as a part of its warning
           source: '',
           originalLintResult: warning,
         },
@@ -229,7 +237,7 @@ function pushResult(results: LintResultWithTodo[], todo: TodoData) {
     text: `Todo violation passes \`${todo.ruleId}\` rule. Please run with \`CLEAN_TODO=1\` env var to remove this todo from the todo list.`,
     severity: 'error',
     column: 0,
-    line: 0
+    line: 0,
   };
 
   if (resultForFile) {
@@ -240,7 +248,7 @@ function pushResult(results: LintResultWithTodo[], todo: TodoData) {
       warnings: [todoWarning],
       deprecations: [],
       invalidOptionWarnings: [],
-      parseErrors: []
+      parseErrors: [],
     });
   }
 }
@@ -255,16 +263,21 @@ function findResult(results: LintResultWithTodo[], todo: TodoData) {
  * Updates the errored state in the results and the return value used as the exitCode
  * This is due required as the errored state may no longer be accurate due to
  * flipping errors into todos and also adding new errors as a result of todo violations
- * @param results 
- * @param returnValue 
+ * @param results
+ * @param returnValue
  */
-export function updateErroredState(results: LintResultWithTodo[], returnValue: LinterResult) {
+export function updateErroredState(
+  results: LintResultWithTodo[],
+  returnValue: LinterResult
+) {
   let errored = false;
 
-  results.forEach(result => {
-    result.errored = result.warnings.some(warning => warning.severity === Severity.ERROR);
+  results.forEach((result) => {
+    result.errored = result.warnings.some(
+      (warning) => warning.severity === Severity.ERROR
+    );
     errored = errored || result.errored;
-  })
+  });
 
-  returnValue.errored = errored
+  returnValue.errored = errored;
 }

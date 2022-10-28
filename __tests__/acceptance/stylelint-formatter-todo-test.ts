@@ -232,10 +232,10 @@ describe('stylelint with todo formatter', function () {
     expect(stdout).toMatch(
       /2:3 {2}✖ {2}Unexpected unknown property "pdding" {2}property-no-unknown/
     );
-    expect(stdout).toMatch(/4:3 {2}⚠ {2}Unexpected duplicate "color" {10}declaration-block-no-duplicate-properties/);
     expect(stdout).toMatch(
-      /2 problems \(1 error, 1 warning\)/
+      /4:3 {2}⚠ {2}Unexpected duplicate "color" {10}declaration-block-no-duplicate-properties/
     );
+    expect(stdout).toMatch(/2 problems \(1 error, 1 warning\)/);
   });
 
   it('generates todos for existing errors', async function () {
@@ -300,10 +300,7 @@ describe('stylelint with todo formatter', function () {
       project.baseDir,
       buildMaybeTodos(
         project.baseDir,
-        getObjectFixture(
-          'different-engine-single-error.json',
-          project.baseDir
-        ),
+        getObjectFixture('different-engine-single-error.json', project.baseDir),
         undefined,
         'ember-template-lint'
       ),
@@ -342,11 +339,17 @@ describe('stylelint with todo formatter', function () {
 
     expect(result.exitCode).toEqual(0);
     expect(stdout).toMatch(/src\/with-errors-0.css/);
-    expect(stdout).toMatch(/2:10 {2}ℹ {2}Unexpected hex color "#0000ff" {2}color-no-hex/);
+    expect(stdout).toMatch(
+      /2:10 {2}ℹ {2}Unexpected hex color "#0000ff" {2}color-no-hex/
+    );
     expect(stdout).toMatch(/src\/with-errors-1.css/);
-    expect(stdout).toMatch(/ℹ {2}Unexpected unknown property "colr" {2}property-no-unknown/);
+    expect(stdout).toMatch(
+      /ℹ {2}Unexpected unknown property "colr" {2}property-no-unknown/
+    );
     expect(stdout).toMatch(/0 problems \(0 errors, 0 warnings, 2 todos\)/);
-    expect(stdout).toMatch(/✔ 2 todos created, 0 todos removed \(warn after 30, error after 60 days\)/);
+    expect(stdout).toMatch(
+      /✔ 2 todos created, 0 todos removed \(warn after 30, error after 60 days\)/
+    );
   });
 
   it('should emit todo items and count when INCLUDE_TODO=1 is set alone with prior todo items', async () => {
@@ -371,9 +374,13 @@ describe('stylelint with todo formatter', function () {
 
     expect(result.exitCode).toEqual(0);
     expect(stdout).toMatch(/src\/with-errors-0.css/);
-    expect(stdout).toMatch(/2:10 {2}ℹ {2}Unexpected hex color "#0000ff" {2}color-no-hex/);
+    expect(stdout).toMatch(
+      /2:10 {2}ℹ {2}Unexpected hex color "#0000ff" {2}color-no-hex/
+    );
     expect(stdout).toMatch(/src\/with-errors-1.css/);
-    expect(stdout).toMatch(/ℹ {2}Unexpected unknown property "colr" {2}property-no-unknown/);
+    expect(stdout).toMatch(
+      /ℹ {2}Unexpected unknown property "colr" {2}property-no-unknown/
+    );
     expect(stdout).toMatch(/0 problems \(0 errors, 0 warnings, 2 todos\)/);
   });
 
@@ -406,10 +413,16 @@ describe('stylelint with todo formatter', function () {
 
     expect(result.exitCode).toEqual(2);
     expect(stdout).toMatch(/src\/with-errors-0.css/);
-    expect(stdout).toMatch(/2:10 {2}ℹ {2}Unexpected hex color "#0000ff" {2}color-no-hex/);
+    expect(stdout).toMatch(
+      /2:10 {2}ℹ {2}Unexpected hex color "#0000ff" {2}color-no-hex/
+    );
     expect(stdout).toMatch(/src\/with-errors-and-warnings.css/);
-    expect(stdout).toMatch(/2:3 {2}✖ {2}Unexpected unknown property "pdding" {2}property-no-unknown/);
-    expect(stdout).toMatch(/4:3 {2}⚠ {2}Unexpected duplicate "color" {10}declaration-block-no-duplicate-properties/);
+    expect(stdout).toMatch(
+      /2:3 {2}✖ {2}Unexpected unknown property "pdding" {2}property-no-unknown/
+    );
+    expect(stdout).toMatch(
+      /4:3 {2}⚠ {2}Unexpected duplicate "color" {10}declaration-block-no-duplicate-properties/
+    );
     expect(stdout).toMatch(/2 problems \(1 error, 1 warning, 1 todo\)/);
   });
 
@@ -783,15 +796,11 @@ describe('stylelint with todo formatter', function () {
         const stdout = stripAnsi(result.stdout);
 
         expect(result.exitCode).toEqual(0);
-        expect(stdout).toMatch(
-          /src\/with-errors-0.css/
-        );
+        expect(stdout).toMatch(/src\/with-errors-0.css/);
         expect(stdout).toMatch(
           /2:10 {2}ℹ {2}Unexpected hex color "#0000ff" {2}color-no-hex/
         );
-        expect(stdout).toMatch(
-          /0 problems \(0 errors, 0 warnings, 1 todo\)/
-        );
+        expect(stdout).toMatch(/0 problems \(0 errors, 0 warnings, 1 todo\)/);
       });
 
       it('should set to todo if errorDate is not expired', async function () {
@@ -819,15 +828,11 @@ describe('stylelint with todo formatter', function () {
         const stdout = stripAnsi(result.stdout);
 
         expect(result.exitCode).toEqual(0);
-        expect(stdout).toMatch(
-          /src\/with-errors-0.css/
-        );
+        expect(stdout).toMatch(/src\/with-errors-0.css/);
         expect(stdout).toMatch(
           /2:10 {2}ℹ {2}Unexpected hex color "#0000ff" {2}color-no-hex/
         );
-        expect(stdout).toMatch(
-          /0 problems \(0 errors, 0 warnings, 1 todo\)/
-        );
+        expect(stdout).toMatch(/0 problems \(0 errors, 0 warnings, 1 todo\)/);
       });
 
       it('should set todo to warn if warnDate has expired via config', async function () {
@@ -852,15 +857,11 @@ describe('stylelint with todo formatter', function () {
         const stdout = stripAnsi(result.stdout);
 
         expect(result.exitCode).toEqual(0);
-        expect(stdout).toMatch(
-          /src\/with-errors-0.css/
-        );
+        expect(stdout).toMatch(/src\/with-errors-0.css/);
         expect(stdout).toMatch(
           /2:10 {2}⚠ {2}Unexpected hex color "#0000ff" {2}color-no-hex/
         );
-        expect(stdout).toMatch(
-          /1 problem \(0 errors, 1 warning\)/
-        );
+        expect(stdout).toMatch(/1 problem \(0 errors, 1 warning\)/);
       });
 
       it('should set todo to warn if warnDate has expired via env var', async function () {
@@ -882,15 +883,11 @@ describe('stylelint with todo formatter', function () {
         const stdout = stripAnsi(result.stdout);
 
         expect(result.exitCode).toEqual(0);
-        expect(stdout).toMatch(
-          /src\/with-errors-0.css/
-        );
+        expect(stdout).toMatch(/src\/with-errors-0.css/);
         expect(stdout).toMatch(
           /2:10 {2}⚠ {2}Unexpected hex color "#0000ff" {2}color-no-hex/
         );
-        expect(stdout).toMatch(
-          /1 problem \(0 errors, 1 warning\)/
-        );
+        expect(stdout).toMatch(/1 problem \(0 errors, 1 warning\)/);
       });
 
       it('should set todo to warn if warnDate has expired but errorDate has not', async function () {
@@ -916,15 +913,11 @@ describe('stylelint with todo formatter', function () {
         const stdout = stripAnsi(result.stdout);
 
         expect(result.exitCode).toEqual(0);
-        expect(stdout).toMatch(
-          /src\/with-errors-0.css/
-        );
+        expect(stdout).toMatch(/src\/with-errors-0.css/);
         expect(stdout).toMatch(
           /2:10 {2}⚠ {2}Unexpected hex color "#0000ff" {2}color-no-hex/
         );
-        expect(stdout).toMatch(
-          /1 problem \(0 errors, 1 warning\)/
-        );
+        expect(stdout).toMatch(/1 problem \(0 errors, 1 warning\)/);
       });
 
       it('should set todo to error if errorDate has expired via config', async function () {
@@ -949,15 +942,11 @@ describe('stylelint with todo formatter', function () {
         const stdout = stripAnsi(result.stdout);
 
         expect(result.exitCode).toEqual(2);
-        expect(stdout).toMatch(
-          /src\/with-errors-0.css/
-        );
+        expect(stdout).toMatch(/src\/with-errors-0.css/);
         expect(stdout).toMatch(
           /2:10 {2}✖ {2}Unexpected hex color "#0000ff" {2}color-no-hex/
         );
-        expect(stdout).toMatch(
-          /1 problem \(1 error, 0 warnings\)/
-        );
+        expect(stdout).toMatch(/1 problem \(1 error, 0 warnings\)/);
       });
 
       it('should set todo to error if errorDate has expired via env var', async function () {
@@ -979,15 +968,11 @@ describe('stylelint with todo formatter', function () {
         const stdout = stripAnsi(result.stdout);
 
         expect(result.exitCode).toEqual(2);
-        expect(stdout).toMatch(
-          /src\/with-errors-0.css/
-        );
+        expect(stdout).toMatch(/src\/with-errors-0.css/);
         expect(stdout).toMatch(
           /2:10 {2}✖ {2}Unexpected hex color "#0000ff" {2}color-no-hex/
         );
-        expect(stdout).toMatch(
-          /1 problem \(1 error, 0 warnings\)/
-        );
+        expect(stdout).toMatch(/1 problem \(1 error, 0 warnings\)/);
       });
 
       it('should set todo to error if both warnDate and errorDate have expired via config', async function () {
@@ -1013,15 +998,11 @@ describe('stylelint with todo formatter', function () {
         const stdout = stripAnsi(result.stdout);
 
         expect(result.exitCode).toEqual(2);
-        expect(stdout).toMatch(
-          /src\/with-errors-0.css/
-        );
+        expect(stdout).toMatch(/src\/with-errors-0.css/);
         expect(stdout).toMatch(
           /2:10 {2}✖ {2}Unexpected hex color "#0000ff" {2}color-no-hex/
         );
-        expect(stdout).toMatch(
-          /1 problem \(1 error, 0 warnings\)/
-        );
+        expect(stdout).toMatch(/1 problem \(1 error, 0 warnings\)/);
       });
 
       it('should set todo to error if both warnDate and errorDate have expired via env vars', async function () {
@@ -1044,15 +1025,11 @@ describe('stylelint with todo formatter', function () {
         const stdout = stripAnsi(result.stdout);
 
         expect(result.exitCode).toEqual(2);
-        expect(stdout).toMatch(
-          /src\/with-errors-0.css/
-        );
+        expect(stdout).toMatch(/src\/with-errors-0.css/);
         expect(stdout).toMatch(
           /2:10 {2}✖ {2}Unexpected hex color "#0000ff" {2}color-no-hex/
         );
-        expect(stdout).toMatch(
-          /1 problem \(1 error, 0 warnings\)/
-        );
+        expect(stdout).toMatch(/1 problem \(1 error, 0 warnings\)/);
       });
 
       if (!isLegacy) {
@@ -1104,4 +1081,58 @@ describe('stylelint with todo formatter', function () {
       }
     });
   }
+
+  it('when given FORMAT_TODO_AS will output with that formatters format', async () => {
+    await project.write({
+      src: {
+        'with-errors-0.css': getStringFixture('with-errors-0.css'),
+      },
+    });
+
+    const result = await runBin({
+      env: {
+        FORMAT_TODO_AS: 'stylelint-sarif-formatter',
+      },
+    });
+
+    expect(JSON.parse(result.stdout)).toBeValidSarifLog();
+  });
+
+  it('when given FORMAT_TODO_AS will ensure that results provided to that formatter do not include todos', async () => {
+    await project.write({
+      src: {
+        'with-errors-0.css': getStringFixture('with-errors-0.css'),
+      },
+    });
+
+    let result = await runBin();
+
+    expect(result.stdout).toMatch('1 problem (1 error, 0 warnings)');
+
+    result = await runBin({
+      env: {
+        UPDATE_TODO: '1',
+      },
+    });
+
+    // we should have created todos for all of the errors
+    expect(result.stdout).toMatch(
+      '✔ 1 todos created, 0 todos removed (warn after 30, error after 60 days)'
+    );
+
+    result = await runBin({
+      env: {
+        FORMAT_TODO_AS: 'stylelint-sarif-formatter',
+      },
+    });
+
+    // extract errors from SARIF results, we should continue to have no errors (todos are respected with external formatter)
+    const potentialErrors = JSON.parse(result.stdout).runs[0].results.reduce(
+      (acc: string[], result: any) =>
+        result.level === 'error' ? [...acc, result.message.text] : acc,
+      []
+    );
+
+    expect(potentialErrors).toHaveLength(0);
+  });
 });
