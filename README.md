@@ -1,14 +1,14 @@
-# @lint-todo/eslint-formatter-todo
+# @lint-todo/stylelint-formatter-todo
 
-![CI Build](https://github.com/lint-todo/eslint-formatter-todo/workflows/CI%20Build/badge.svg)
-[![npm version](https://badge.fury.io/js/%40lint-todo%2Feslint-formatter-todo.svg)](https://badge.fury.io/js/%40lint-todo%2Feslint-formatter-todo)
-[![License](https://img.shields.io/npm/l/@lint-todo/eslint-formatter-todo.svg)](https://github.com/@lint-todo/eslint-formatter-todo/blob/master/package.json)
+![CI Build](https://github.com/lint-todo/stylelint-formatter-todo/workflows/CI%20Build/badge.svg)
+[![npm version](https://badge.fury.io/js/%40lint-todo%2Fstylelint-formatter-todo.svg)](https://badge.fury.io/js/%40lint-todo%2Fstylelint-formatter-todo)
+[![License](https://img.shields.io/npm/l/@lint-todo/stylelint-formatter-todo.svg)](https://github.com/@lint-todo/stylelint-formatter-todo/blob/master/package.json)
 ![Dependabot](https://badgen.net/badge/icon/dependabot?icon=dependabot&label)
 ![Volta Managed](https://img.shields.io/static/v1?label=volta&message=managed&color=yellow&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QAeQC6AMEpK7AhAAAACXBIWXMAAAsSAAALEgHS3X78AAAAB3RJTUUH5AMGFS07qAYEaAAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAAFmSURBVDjLY2CgB/g/j0H5/2wGW2xyTAQ1r2DQYOBgm8nwh+EY6TYvZtD7f9rn5e81fAGka17GYPL/esObP+dyj5Cs+edqZsv/V8o//H+z7P+XHarW+NSyoAv8WsFszyKTtoVBM5Tn7/Xys+zf7v76vYrJlPEvAwPjH0YGxp//3jGl/L8LU8+IrPnPUkY3ZomoDQwOpZwMv14zMHy8yMDwh4mB4Q8jA8OTgwz/L299wMDyx4Mp9f9NDAP+bWVwY3jGsJpB3JaDQVCEgYHlLwPDfwYWRqVQJgZmHoZ/+3PPfWP+68Mb/Pw5sqUoLni9ipuRnekrAwMjA8Ofb6K8/PKBF5nU7RX+Hize8Y2DOZTP7+kXogPy1zrH+f/vT/j/Z5nUvGcr5VhJioUf88UC/59L+/97gUgDyVH4YzqXxL8dOs/+zuFLJivd/53HseLPPHZPsjT/nsHi93cqozHZue7rLDYhUvUAADjCgneouzo/AAAAAElFTkSuQmCC&link=https://volta.sh)
 ![TypeScript](https://badgen.net/badge/icon/typescript?icon=typescript&label)
 [![Code Style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](#badge)
 
-> An ESLint formatter that can report errors as todos, which can be deferred and fixed at a later time.
+> A Stylelint formatter that can report errors as todos, which can be deferred and fixed at a later time.
 
 Linting is a fundamental tool to help ensure the quality of a codebase. Ensuring there are as few linting errors as possible (ideally 0), is a useful measure of a baseline of code hygiene.
 
@@ -24,35 +24,34 @@ This formatter allows you to introduce new rules immediately, without blocking c
 
 ## Usage
 
-Todos are stored in a `.lint-todo` directory that should be checked in with other source code. Each error generates a unique file, allowing for multiple errors within a single file to be resolved individually with minimal conflicts.
+Todos are stored in a `.lint-todo` file that should be checked in with other source code. Each error generates a unique entry, allowing for multiple errors within a single file to be resolved individually with minimal conflicts.
 
 To convert errors to todos, you can use the `UPDATE_TODO` environment variable. This will convert all active errors to todos, hiding them from the linting output.
 
 ```bash
-UPDATE_TODO=1 eslint --format @lint-todo/eslint-formatter-todo
+UPDATE_TODO=1 stylelint "**/*.css" --format @lint-todo/stylelint-formatter-todo
 ```
 
-If you want to see todos as part of `eslint`'s output, you can include them
+If you want to see todos as part of `stylelint`'s output, you can include them.
 
-<img src="docs/post-todo.png" style="background-color: #fff" />
 
-If an error is fixed manually, `eslint` will automatically remove the todo when run again.
+If an error is fixed manually, `stylelint` will automatically remove the todo when run again.
 
 ```bash
-eslint . --format @lint-todo/eslint-formatter-todo
+stylelint "**/*.css" --format @lint-todo/stylelint-formatter-todo
 ```
 
 If you want to opt out of this behavior, you can run with the `NO_CLEAN_TODO` env var set.
 
 ```bash
 # Will not remove the todo automatically
-NO_CLEAN_TODO='1' eslint . --format @lint-todo/eslint-formatter-todo
+NO_CLEAN_TODO='1' stylelint "**/*.css" --format @lint-todo/stylelint-formatter-todo
 ```
 
 To compact the `.lint-todo` storage file, you can use the `COMPACT_TODO` environment variable.
 
 ```bash
-COMPACT_TODO=1 eslint . --format @lint-todo/eslint-formatter-todo
+COMPACT_TODO=1 stylelint "**/*.css" --format @lint-todo/stylelint-formatter-todo
 ```
 
 ### Configuring Due Dates
@@ -68,7 +67,7 @@ Due dates can be configured in one of two ways, but both specify integers for `w
    ```json
    {
      "lintTodo": {
-       "eslint": {
+       "stylelint": {
          "decayDays": {
            "warn": 5,
            "error": 10
@@ -82,7 +81,7 @@ Due dates can be configured in one of two ways, but both specify integers for `w
 
    ```js
    module.exports = {
-     eslint: {
+     stylelint: {
        daysToDecay: {
          warn: 5,
          error: 10,
@@ -94,7 +93,7 @@ Due dates can be configured in one of two ways, but both specify integers for `w
 1. Via environment variables
 
    ```bash
-   UPDATE_TODO='1' TODO_DAYS_TO_WARN="5" TODO_DAYS_TO_ERROR="10" eslint . --format @lint-todo/eslint-formatter-todo
+   UPDATE_TODO='1' TODO_DAYS_TO_WARN="5" TODO_DAYS_TO_ERROR="10" stylelint "**/*.css" --format @lint-todo/stylelint-formatter-todo
    ```
 
    In order of precedence, environment variables override package.json configuration values.
@@ -104,7 +103,7 @@ Due dates can be configured in one of two ways, but both specify integers for `w
    ```json
    {
      "lintTodo": {
-       "eslint": {
+       "stylelint": {
          "decayDays": {
            "warn": 5,
            "error": 10
@@ -117,7 +116,7 @@ Due dates can be configured in one of two ways, but both specify integers for `w
    ...and you supply the following environment variables:
 
    ```bash
-   UPDATE_TODO='1' TODO_DAYS_TO_WARN= '2' eslint . --format @lint-todo/eslint-formatter-todo
+   UPDATE_TODO='1' TODO_DAYS_TO_WARN= '2' stylelint "**/*.css" --format @lint-todo/stylelint-formatter-todo
    ```
 
    ...the todos will be created with a `warn` date 2 days from the created date, and an `error` date 10 days from the created date.
@@ -131,13 +130,13 @@ Due dates can be configured on a per-rule basis with the `daysToDecayByRule` opt
    ```json
    {
      "lintTodo": {
-       "eslint": {
+       "stylelint": {
          "daysToDecay": {
            "warn": 5,
            "error": 10
          },
          "daysToDecayByRule": {
-           "no-plus-plus": {
+           "alpha-value-notation": {
              "warn": 10,
              "error": 20
            }
@@ -151,13 +150,13 @@ Due dates can be configured on a per-rule basis with the `daysToDecayByRule` opt
 
    ```js
    module.exports = {
-     eslint: {
+     stylelint: {
        daysToDecay: {
          warn: 5,
          error: 10,
        },
        daysToDecayByRule: {
-         'no-plus-plus': {
+         'alpha-value-notation': {
            warn: 10,
            error: 20,
          },
@@ -171,22 +170,22 @@ Due dates can be configured on a per-rule basis with the `daysToDecayByRule` opt
 Converting errors to todos with `warn` and `error` dates that transition the `todo` to `warn` after 10 days and `error` after 20 days:
 
 ```bash
-UPDATE_TODO='1' TODO_DAYS_TO_WARN= '10' TODO_DAYS_TO_ERROR='20' eslint . --format @lint-todo/eslint-formatter-todo
+UPDATE_TODO='1' TODO_DAYS_TO_WARN= '10' TODO_DAYS_TO_ERROR='20' stylelint "**/*.css" --format @lint-todo/stylelint-formatter-todo
 ```
 
 Converting errors to todos with `warn` and `error` dates that transition the `todo` `error` after 20 days, but doesn't include a `warn` date:
 
 ```bash
-UPDATE_TODO='1' TODO_DAYS_TO_WARN= '' TODO_DAYS_TO_ERROR='20' eslint . --format @lint-todo/eslint-formatter-todo
+UPDATE_TODO='1' TODO_DAYS_TO_WARN= '' TODO_DAYS_TO_ERROR='20' stylelint "**/*.css" --format @lint-todo/stylelint-formatter-todo
 ```
 
 ### Additional options for formatting output
 
-This package will only format the data in todos with the pretty format. 
+This package will only format the data in todos with the pretty format.
 
-If you need to preserve the todo functionality while outputting in a different format for your CI system, you can set an additional environment variable, `FORMAT_TODO_AS`, which references a node module that is installed in your project. 
+If you need to preserve the todo functionality while outputting in a different format for your CI system, you can set an additional environment variable, `FORMAT_TODO_AS`, which references a node module that is installed in your project.
 
 :warning: Note that additional functionality of this formatter is not supported (i.e., `UPDATE_TODO`, etc) when using the `FORMAT_TODO_AS` flag; this flag is strictly for modifying the command line output.
 
 ```bash
-FORMAT_TODO_AS=@microsoft/eslint-formatter-sarif eslint . --format @lint-todo/eslint-formatter-todo
+FORMAT_TODO_AS=stylelint-sarif-formatter stylelint "**/*.css" --format @lint-todo/stylelint-formatter-todo
