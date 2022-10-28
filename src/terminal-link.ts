@@ -12,10 +12,12 @@ const SEP = ';';
  * @param {string} url
  * @returns {string}
  */
-export function terminalLink(text:string, url: string): string {
-	if (supportsHyperlinks.stdout) {
-		return [OSC, '8', SEP, SEP, url, BEL, text, OSC, '8', SEP, SEP, BEL].join('');
-	}
+export function terminalLink(text: string, url: string): string {
+  if (supportsHyperlinks.stdout) {
+    return [OSC, '8', SEP, SEP, url, BEL, text, OSC, '8', SEP, SEP, BEL].join(
+      ''
+    );
+  }
 
-	return text;
-};
+  return text;
+}
