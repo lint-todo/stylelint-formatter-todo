@@ -13,7 +13,7 @@ describe('utils', () => {
 
   it('returns the path passed as ENV variable', () => {
     const eslintTodoDir = 'eslint-todo-dir';
-    process.env.ESLINT_TODO_DIR = eslintTodoDir;
+    process.env.STYLELINT_TODO_DIR = eslintTodoDir;
     expect(getBaseDir()).toEqual(eslintTodoDir);
   });
 

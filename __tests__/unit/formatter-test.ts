@@ -1,9 +1,11 @@
-import {
-  readTodoData,
-  todoStorageFileExists,
-} from '@lint-todo/utils';
+import { readTodoData, todoStorageFileExists } from '@lint-todo/utils';
 import { DirResult, dirSync } from 'tmp';
-import { buildMaybeTodos, formatter, updateResults, updateErroredState } from '../../src/formatter';
+import {
+  buildMaybeTodos,
+  formatter,
+  updateResults,
+  updateErroredState,
+} from '../../src/formatter';
 import fixtures from '../__fixtures__/fixtures';
 import { buildReadOptions } from '../__utils__/build-read-options';
 import { deepCopy } from '../__utils__/deep-copy';
@@ -20,7 +22,7 @@ describe('format-results', () => {
   beforeEach(() => {
     tmpDir = dirSync({ unsafeCleanup: true });
     process.stdout.write = jest.fn();
-    process.env = { ...INITIAL_ENV, ESLINT_TODO_DIR: tmpDir.name };
+    process.env = { ...INITIAL_ENV, STYLELINT_TODO_DIR: tmpDir.name };
   });
 
   afterEach(() => {
@@ -50,7 +52,7 @@ describe('format-results', () => {
     const todos = readTodoData(tmpDir.name, buildReadOptions());
 
     const warningsTotal = results.reduce((size, result) => {
-      return size + result.warnings.length
+      return size + result.warnings.length;
     }, 0);
 
     // All warnings generate todos
@@ -97,7 +99,7 @@ describe('format-results', () => {
       if (resultIndex === results.length - 1) {
         return;
       }
-      
+
       result.warnings.forEach((warning) => {
         expect(warning.severity).toEqual(Severity.TODO);
       });
@@ -116,7 +118,7 @@ describe('format-results', () => {
 
     results.forEach((result) => {
       expect(result.errored).toEqual(false);
-      
+
       result.warnings.forEach((warning) => {
         expect(warning.severity).toEqual(Severity.TODO);
       });
