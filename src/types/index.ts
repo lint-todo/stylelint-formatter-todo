@@ -5,20 +5,19 @@ export enum Severity {
   TODO = 'todo',
   OFF = 'off',
   WARNING = 'warning',
-  ERROR = 'error'
+  ERROR = 'error',
 }
-
 
 export type LintResultWithTodo = Omit<stylelint.LintResult, 'warnings'> & {
-  warnings: TodoWarning[]
-}
+  warnings: TodoWarning[];
+};
 export type LinterResultWithTodo = Omit<stylelint.LinterResult, 'results'> & {
-  results: LintResultWithTodo[]
-}
+  results: LintResultWithTodo[];
+};
 
 export type TodoWarning = Omit<stylelint.Warning, 'severity'> & {
-  severity:  'todo'| 'off' | 'warning' | 'error';
-}
+  severity: 'todo' | 'off' | 'warning' | 'error';
+};
 
 export type TodoInfo =
   | {
@@ -55,6 +54,10 @@ export interface TodoFormatterCounts {
   readonly fixableTodoCount: number;
 }
 
-export type ColumnWidths = {[k: number]: number}
+export type ColumnWidths = { [k: number]: number };
 
-export type Formatter = (results:LintResultWithTodo[], options?: TodoPrintOptions, returnValue?:stylelint.LinterResult) => string;
+export type Formatter = (
+  results: LintResultWithTodo[],
+  options?: TodoPrintOptions,
+  returnValue?: stylelint.LinterResult
+) => string;
