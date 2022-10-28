@@ -98,7 +98,8 @@
     }
   },
   "volta": {
-    "node": "14.20.0"
+    "node": "14.20.0",
+    "npm": "8.19.2"
   },
   "bugs": {
     "url": "https://github.com/lint-todo/stylelint-formatter-todo/issues"
