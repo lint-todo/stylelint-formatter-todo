@@ -20,7 +20,7 @@ describe('format-results', () => {
   beforeEach(() => {
     tmpDir = dirSync({ unsafeCleanup: true });
     process.stdout.write = jest.fn();
-    process.env = { ...INITIAL_ENV, ESLINT_TODO_DIR: tmpDir.name };
+    process.env = { ...INITIAL_ENV, STYLELINT_TODO_DIR: tmpDir.name };
   });
 
   afterEach(() => {

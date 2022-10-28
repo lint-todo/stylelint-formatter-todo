@@ -12,9 +12,9 @@ describe('utils', () => {
   });
 
   it('returns the path passed as ENV variable', () => {
-    const eslintTodoDir = 'eslint-todo-dir';
-    process.env.ESLINT_TODO_DIR = eslintTodoDir;
-    expect(getBaseDir()).toEqual(eslintTodoDir);
+    const stylelintTodoDir = 'stylelint-todo-dir';
+    process.env.STYLELINT_TODO_DIR = stylelintTodoDir;
+    expect(getBaseDir()).toEqual(stylelintTodoDir);
   });
 
   it('returns current working dir if no ENV variable was passed', () => {
