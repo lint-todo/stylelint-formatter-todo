@@ -2,6 +2,13 @@
   "name": "@lint-todo/stylelint-formatter-todo",
   "version": "1.0.0-beta.0",
   "description": "A Stylelint formatter that can report errors as todos.",
+  "keywords": [
+    "stylelint"
+  ],
+  "homepage": "https://github.com/lint-todo/stylelint-formatter-todo#readme",
+  "bugs": {
+    "url": "https://github.com/lint-todo/stylelint-formatter-todo/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/lint-todo/stylelint-formatter-todo.git"
@@ -13,6 +20,9 @@
   ],
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
+  "directories": {
+    "lib": "lib"
+  },
   "scripts": {
     "build": "tsc --build",
     "build:watch": "tsc --watch",
@@ -75,6 +85,10 @@
   "engines": {
     "node": ">= 14"
   },
+  "volta": {
+    "node": "14.20.0",
+    "npm": "8.19.2"
+  },
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org"
@@ -96,19 +110,5 @@
       "release": true,
       "tokenRef": "GITHUB_AUTH"
     }
-  },
-  "volta": {
-    "node": "14.20.0",
-    "npm": "8.19.2"
-  },
-  "bugs": {
-    "url": "https://github.com/lint-todo/stylelint-formatter-todo/issues"
-  },
-  "homepage": "https://github.com/lint-todo/stylelint-formatter-todo#readme",
-  "directories": {
-    "lib": "lib"
-  },
-  "keywords": [
-    "stylelint"
-  ]
+  }
 }
