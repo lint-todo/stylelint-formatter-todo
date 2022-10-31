@@ -17,8 +17,6 @@ import { getObjectFixture, getStringFixture } from '../__utils__/get-fixture';
 import { buildReadOptions } from '../__utils__/build-read-options';
 import { buildMaybeTodos } from '../../src/formatter';
 
-jest.setTimeout(500_000);
-
 describe('stylelint with todo formatter', function () {
   let project: FakeProject;
 
@@ -29,7 +27,6 @@ describe('stylelint with todo formatter', function () {
       './stylelint-config.json',
       '--custom-formatter',
       require.resolve('../..'),
-      // test all files under src/ folder
       'src/',
     ],
     createProject: async () => FakeProject.getInstance(),
