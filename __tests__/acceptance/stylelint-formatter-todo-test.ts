@@ -27,7 +27,6 @@ describe('stylelint with todo formatter', function () {
       './stylelint-config.json',
       '--custom-formatter',
       require.resolve('../..'),
-      // test all files under src/ folder
       'src/',
     ],
     createProject: async () => FakeProject.getInstance(),
@@ -454,7 +453,7 @@ describe('stylelint with todo formatter', function () {
     const results = stripAnsi(result.stdout).trim().split(/\r?\n/);
 
     expect(results[1]).toMatch(
-      /0:0 {2}✖ {2}Todo violation passes `CssSyntaxError` rule. Please run with `CLEAN_TODO=1` env var to remove this todo from the todo list {2}invalid-todo-violation-rule/
+      /0:0 {2}✖ {2}Todo violation passes `property-no-unknown` rule. Please run with `CLEAN_TODO=1` env var to remove this todo from the todo list {2}invalid-todo-violation-rule/
     );
     expect(results[3]).toMatch(/1 problem \(1 error, 0 warnings\)/);
 
@@ -504,8 +503,8 @@ describe('stylelint with todo formatter', function () {
     expect(readTodoStorageFile(getTodoStorageFilePath(project.baseDir)))
       .toMatchInlineSnapshot(`
       Array [
-        "add|stylelint|CssSyntaxError|1|1|1|1|da39a3ee5e6b4b0d3255bfef95601890afd80709|1638316800000|1640908800000|1643500800000|src/with-fixable-error.css",
-        "remove|stylelint|CssSyntaxError|1|1|1|1|da39a3ee5e6b4b0d3255bfef95601890afd80709|1638316800000|1640908800000|1643500800000|src/with-fixable-error.css",
+        "add|stylelint|property-no-unknown|2|3|2|17|d9b7a20d3bf129c305f5a239d020e79e8095ff87|1638316800000|1640908800000|1643500800000|src/with-fixable-error.css",
+        "remove|stylelint|property-no-unknown|2|3|2|17|d9b7a20d3bf129c305f5a239d020e79e8095ff87|1638316800000|1640908800000|1643500800000|src/with-fixable-error.css",
       ]
     `);
 
@@ -515,12 +514,9 @@ describe('stylelint with todo formatter', function () {
       },
     });
 
-    expect(readTodoStorageFile(getTodoStorageFilePath(project.baseDir)))
-      .toMatchInlineSnapshot(`
-      Array [
-        "add|stylelint|CssSyntaxError|1|1|1|1|da39a3ee5e6b4b0d3255bfef95601890afd80709|1638316800000|1640908800000|1643500800000|src/with-fixable-error.css",
-      ]
-    `);
+    expect(
+      readTodoStorageFile(getTodoStorageFilePath(project.baseDir))
+    ).toMatchInlineSnapshot(`Array []`);
 
     expect(result.exitCode).toEqual(0);
   });
