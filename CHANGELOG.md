@@ -1,4 +1,14 @@
 
+
+## v1.0.0-beta.1 (2022-10-31)
+
+#### :house: Internal
+* [#57](https://github.com/lint-todo/stylelint-formatter-todo/pull/57) Use source utils from @lint-todo/utils ([@scalvert](https://github.com/scalvert))
+
+#### Committers: 1
+- Steve Calvert ([@scalvert](https://github.com/scalvert))
+
+
 ## v1.0.0-beta.0 (2022-10-28)
 
 #### :rocket: Enhancement
