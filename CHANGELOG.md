@@ -1,5 +1,15 @@
 
 
+
+## v1.1.0 (2023-05-04)
+
+#### :rocket: Enhancement
+* [#127](https://github.com/lint-todo/stylelint-formatter-todo/pull/127) Stylelint 15 ([@elwayman02](https://github.com/elwayman02))
+
+#### Committers: 1
+- Jordan Hawker ([@elwayman02](https://github.com/elwayman02))
+
+
 ## v1.0.0 (2022-11-05)
 
 #### :rocket: Enhancement
